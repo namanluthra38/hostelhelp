@@ -1,0 +1,39 @@
+### Get all hostels
+GET http://localhost:4001/hostels
+Accept: application/json
+
+###
+
+### Create a new hostel
+POST http://localhost:4001/hostels
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Zakir A",
+  "hasAC": true,
+  "numberOfRooms": 100,
+  "numberOfSeatsPerRoom": 2,
+  "isBoysHostel": true
+}
+
+###
+
+### Update an existing hostel
+PUT http://localhost:4001/hostels/{{hostelId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Hostel A - Updated",
+  "hasAC": false,
+  "numberOfRooms": 120,
+  "numberOfSeatsPerRoom": 3,
+  "isBoysHostel": false
+}
+
+###
+
+### Delete a hostel
+DELETE http://localhost:4001/hostels/{{hostelId}}
+Accept: application/json
