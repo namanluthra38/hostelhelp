@@ -1,0 +1,44 @@
+### Get all students
+GET http://localhost:4002/wardens
+Accept: application/json
+
+###
+
+### Create a new student
+POST http://localhost:4002/wardens
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "securePass123",
+  "gender": "Male",
+  "phone": "9876543210",
+  "hostel": "Hostel A",
+  "roomNumber": 101
+}
+
+###
+
+### Update an existing student
+PUT http://localhost:4002/wardens/8e9c8e30-1f0a-4d41-b8c4-15a3b9fd53c1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "John Doe Updated",
+  "email": "john.updated@example.com",
+  "password": "newPass456",
+  "gender": "Male",
+  "phone": "9876543210",
+  "hostel": "Hostel B",
+  "roomNumber": 202
+}
+
+###
+
+### Delete a student
+DELETE http://localhost:4002/wardens/8e9c8e30-1f0a-4d41-b8c4-15a3b9fd53c1
+
+Accept: application/json
