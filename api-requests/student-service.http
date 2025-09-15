@@ -26,7 +26,7 @@ Accept: application/json
 ###
 
 ### Update an existing student
-PUT http://localhost:4000/students/c4646089-2611-48b1-881a-20758f292f3
+PUT http://localhost:4000/students/16f809ea-b801-45d3-af81-b5f5f81b6780
 Content-Type: application/json
 Accept: application/json
 
