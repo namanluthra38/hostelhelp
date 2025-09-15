@@ -30,10 +30,10 @@ public class WardenService {
     }
 
     public WardenResponseDTO createWarden(WardenRequestDTO wardenRequestDTO) {
-        if (wardenRepository.existsByEmail(wardenRequestDTO.getEmail())) {
+        if (wardenRepository.existsByEmail(wardenRequestDTO.email())) {
             throw new EmailAlreadyExistsException(
                     "A warden with this email " + "already exists"
-                            + wardenRequestDTO.getEmail());
+                            + wardenRequestDTO.email());
         }
 
         Warden newWarden = wardenRepository.save(
@@ -48,13 +48,13 @@ public class WardenService {
         Warden warden = wardenRepository.findById(id).orElseThrow(() ->
                 new WardenNotFoundException("Warden not found with id " + id));
 
-        if(wardenRepository.existsByEmailAndIdNot(wardenRequestDTO.getEmail(), id)){
+        if(wardenRepository.existsByEmailAndIdNot(wardenRequestDTO.email(), id)){
             throw new EmailAlreadyExistsException("A warden with the email "
-                    + wardenRequestDTO.getEmail() + " already exists");
+                    + wardenRequestDTO.email() + " already exists");
         }
 
-        warden.setName(wardenRequestDTO.getName());
-        warden.setEmail(wardenRequestDTO.getEmail());
+        warden.setName(wardenRequestDTO.name());
+        warden.setEmail(wardenRequestDTO.email());
         Warden updatedWarden = wardenRepository.save(warden);
         return WardenMapper.toDTO(updatedWarden);
     }

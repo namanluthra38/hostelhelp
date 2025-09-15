@@ -22,7 +22,7 @@ Accept: application/json
 ###
 
 ### Update an existing student
-PUT http://localhost:4002/wardens/8e9c8e30-1f0a-4d41-b8c4-15a3b9fd53c1
+PUT http://localhost:4002/wardens/23242d42-2dc2-4069-9fd8-824040b439be
 Content-Type: application/json
 Accept: application/json
 
@@ -39,6 +39,6 @@ Accept: application/json
 ###
 
 ### Delete a student
-DELETE http://localhost:4002/wardens/8e9c8e30-1f0a-4d41-b8c4-15a3b9fd53c1
+DELETE http://localhost:4002/wardens/23242d42-2dc2-4069-9fd8-824040b439be
 
 Accept: application/json

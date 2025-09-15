@@ -2,44 +2,30 @@ package com.hostelhelp.studentservice.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class StudentRequestDTO {
+public record StudentRequestDTO(
+        @NotNull String name,
 
-    @NotNull
-    private String name;
+        @NotNull @Email String email,
 
-    @NotNull
-    @Email
-    private String email;
+        @NotNull @Size(min = 6, message = "Password must be at least 6 characters")
+        String password,
 
-    @NotNull
-    private String password;
+        @NotNull Integer graduationYear,
 
-    @NotNull
-    private Integer graduationYear;
+        @NotNull String uid,
 
-    @NotNull
-    private String uid;
+        @NotNull String address,
 
-    @NotNull
-    private String address;
+        @NotNull LocalDate dateOfBirth,
 
-    @NotNull
-    private String dateOfBirth;
+        @NotNull String gender,
 
-    @NotNull
-    private String gender;
+        @NotNull String phone,
 
-    @NotNull
-    private String phone;
-
-    private String hostel;
-    private Integer roomNumber;
-}
+        String hostel,
+        Integer roomNumber
+) {}

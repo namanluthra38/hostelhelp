@@ -8,27 +8,27 @@ public class WardenMapper {
 
     public static Warden toModel(WardenRequestDTO dto) {
         return Warden.builder()
-                .name(dto.getName())
-                .email(dto.getEmail())
-                .password(dto.getPassword())
-                .gender(dto.getGender())
-                .phone(dto.getPhone())
-                .hostel(dto.getHostel())
-                .roomNumber(dto.getRoomNumber())
+                .name(dto.name())
+                .email(dto.email())
+                .password(dto.password())
+                .gender(dto.gender())
+                .phone(dto.phone())
+                .hostel(dto.hostel())
+                .roomNumber(dto.roomNumber())
                 .build();
     }
 
     public static WardenResponseDTO toDTO(Warden warden) {
-        return WardenResponseDTO.builder()
-                .id(warden.getId())
-                .name(warden.getName())
-                .email(warden.getEmail())
-                .gender(warden.getGender())
-                .phone(warden.getPhone())
-                .hostel(warden.getHostel())
-                .roomNumber(warden.getRoomNumber())
-                .createdAt(warden.getCreatedAt())
-                .updatedAt(warden.getUpdatedAt())
-                .build();
+        return new WardenResponseDTO(
+                warden.getId(),
+                warden.getName(),
+                warden.getEmail(),
+                warden.getGender(),
+                warden.getPhone(),
+                warden.getHostel(),
+                warden.getRoomNumber(),
+                warden.getCreatedAt(),
+                warden.getUpdatedAt()
+        );
     }
 }

@@ -1,8 +1,6 @@
 package com.hostelhelp.studentservice.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,31 +16,38 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Student {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @NotNull
+    @Column(nullable = false)
     private String name;
-    @NotNull
-    @Email
-    @Column(unique = true)
+
+    @Column(nullable = false, unique = true)
     private String email;
-    @NotNull
+
+    @Column(nullable = false)
     private String password;
-    @NotNull
+
+    @Column(nullable = false)
     private Integer graduationYear;
-    @NotNull
-    @Column(unique = true)
-    private String UID;
-    @NotNull
+
+    @Column(nullable = false, unique = true)
+    private String uid;
+
+    @Column(nullable = false)
     private String address;
-    @NotNull
+
+    @Column(nullable = false)
     private LocalDate dateOfBirth;
-    @NotNull
+
+    @Column(nullable = false)
     private String gender;
-    @NotNull
+
+    @Column(nullable = false)
     private String phone;
+
     private String hostel;
     private Integer roomNumber;
 
@@ -59,7 +64,4 @@ public class Student {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
-
-
 }

@@ -14,22 +14,24 @@ Accept: application/json
   "hasAC": true,
   "numberOfRooms": 100,
   "numberOfSeatsPerRoom": 2,
-  "isBoysHostel": true
+  "isBoysHostel": true,
+  "chargesPerSemester": 5000
 }
 
 ###
 
 ### Update an existing hostel
-PUT http://localhost:4001/hostels/{{hostelId}}
+PUT http://localhost:4001/hostels/28b1e2ed-e61a-4af8-8a80-36d0fc433ee2
 Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "Hostel A - Updated",
+  "name": "Zakir A - Updated",
   "hasAC": false,
   "numberOfRooms": 120,
   "numberOfSeatsPerRoom": 3,
-  "isBoysHostel": false
+  "isBoysHostel": false,
+  "chargesPerSemester": 5000
 }
 
 ###

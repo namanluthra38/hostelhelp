@@ -21,17 +21,16 @@ public class HostelService {
         this.hostelRepository = hostelRepository;
     }
 
-    // Get all hostels
+
     public List<HostelResponseDTO> getHostels() {
         List<Hostel> hostels = hostelRepository.findAll();
         return hostels.stream().map(HostelMapper::toDTO).toList();
     }
 
-    // Create hostel
     public HostelResponseDTO createHostel(HostelRequestDTO hostelRequestDTO) {
-        if (hostelRepository.existsByName(hostelRequestDTO.getName())) {
+        if (hostelRepository.existsByName(hostelRequestDTO.name())) {
             throw new HostelAlreadyExistsException(
-                    "A hostel with this name already exists: " + hostelRequestDTO.getName()
+                    "A hostel with this name already exists: " + hostelRequestDTO.name()
             );
         }
 
@@ -42,27 +41,30 @@ public class HostelService {
         return HostelMapper.toDTO(newHostel);
     }
 
-    // Update hostel
+
     public HostelResponseDTO updateHostel(UUID id, HostelRequestDTO hostelRequestDTO) {
         Hostel hostel = hostelRepository.findById(id).orElseThrow(() ->
                 new HostelNotFoundException("Hostel not found with id " + id));
 
-        if (hostelRepository.existsByNameAndIdNot(hostelRequestDTO.getName(), id)) {
+        if (hostelRepository.existsByNameAndIdNot(hostelRequestDTO.name(), id)) {
             throw new HostelAlreadyExistsException(
-                    "A hostel with this name already exists: " + hostelRequestDTO.getName()
+                    "A hostel with this name already exists: " + hostelRequestDTO.name()
             );
         }
 
-        hostel.setName(hostelRequestDTO.getName());
-        hostel.setHasAC(hostelRequestDTO.getHasAC());
-        hostel.setNumberOfRooms(hostelRequestDTO.getNumberOfRooms());
-        hostel.setNumberOfSeatsPerRoom(hostelRequestDTO.getNumberOfSeatsPerRoom());
-        hostel.setBoysHostel(hostelRequestDTO.getIsBoysHostel());
+
+        hostel.setName(hostelRequestDTO.name());
+        hostel.setHasAC(hostelRequestDTO.hasAC());
+        hostel.setNumberOfRooms(hostelRequestDTO.numberOfRooms());
+        hostel.setNumberOfSeatsPerRoom(hostelRequestDTO.numberOfSeatsPerRoom());
+        hostel.setChargesPerSemester(hostelRequestDTO.chargesPerSemester());
+        hostel.setBoysHostel(hostelRequestDTO.isBoysHostel());
 
         Hostel updatedHostel = hostelRepository.save(hostel);
 
         return HostelMapper.toDTO(updatedHostel);
     }
+
 
     // Delete hostel
     public void deleteHostel(UUID id) {

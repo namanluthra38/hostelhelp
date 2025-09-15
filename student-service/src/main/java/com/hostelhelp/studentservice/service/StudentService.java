@@ -30,10 +30,10 @@ public class StudentService {
     }
 
     public StudentResponseDTO createStudent(StudentRequestDTO studentRequestDTO) {
-        if (studentRepository.existsByEmail(studentRequestDTO.getEmail())) {
+        if (studentRepository.existsByEmail(studentRequestDTO.email())) {
             throw new EmailAlreadyExistsException(
                     "A student with this email " + "already exists"
-                            + studentRequestDTO.getEmail());
+                            + studentRequestDTO.email());
         }
 
         Student newStudent = studentRepository.save(
@@ -48,15 +48,15 @@ public class StudentService {
         Student student = studentRepository.findById(id).orElseThrow(() ->
                 new StudentNotFoundException("Student not found with id " + id));
 
-        if(studentRepository.existsByEmailAndIdNot(studentRequestDTO.getEmail(), id)){
+        if(studentRepository.existsByEmailAndIdNot(studentRequestDTO.email(), id)){
             throw new EmailAlreadyExistsException("A student with the email "
-                    + studentRequestDTO.getEmail() + " already exists");
+                    + studentRequestDTO.email() + " already exists");
         }
 
-        student.setName(studentRequestDTO.getName());
-        student.setEmail(studentRequestDTO.getEmail());
-        student.setAddress(studentRequestDTO.getAddress());
-        student.setDateOfBirth(LocalDate.parse(studentRequestDTO.getDateOfBirth()));
+        student.setName(studentRequestDTO.name());
+        student.setEmail(studentRequestDTO.email());
+        student.setAddress(studentRequestDTO.address());
+        student.setDateOfBirth(studentRequestDTO.dateOfBirth());
         Student updatedStudent = studentRepository.save(student);
         return StudentMapper.toDTO(updatedStudent);
     }

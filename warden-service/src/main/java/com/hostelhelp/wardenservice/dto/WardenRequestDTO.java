@@ -1,27 +1,26 @@
 package com.hostelhelp.wardenservice.dto;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
-@Data
-public class WardenRequestDTO {
-    @NotNull(message = "Name cannot be null")
-    private String name;
+public record WardenRequestDTO(
+        @NotBlank(message = "Name is required")
+        String name,
 
-    @NotNull(message = "Email cannot be null")
-    @Email(message = "Invalid email format")
-    private String email;
+        @NotBlank(message = "Email is required")
+        @Email(message = "Email should be valid")
+        String email,
 
-    @NotNull(message = "Password cannot be null")
-    private String password;
+        @NotBlank(message = "Password is required")
+        String password,
 
-    @NotNull(message = "Gender cannot be null")
-    private String gender;
+        @NotBlank(message = "Gender is required")
+        String gender,
 
-    @NotNull(message = "Phone number cannot be null")
-    private String phone;
+        @NotBlank(message = "Phone is required")
+        String phone,
 
-    private String hostel;
-    private Integer roomNumber;
-}
+        String hostel,
+        Integer roomNumber
+) {}

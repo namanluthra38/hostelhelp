@@ -1,14 +1,7 @@
 package com.hostelhelp.hostelservice.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,31 +12,29 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Hostel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @NotNull
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @NotNull
+    @Column(nullable = false)
     private boolean hasAC;
 
-    @Min(value = 1, message = "Number of rooms must be at least 1")
-    @Max(value = 1000, message = "Number of rooms cannot exceed 1000")
+    @Column(nullable = false)
     private Integer numberOfRooms;
 
-    @Min(value = 1, message = "Number of seats per room must be at least 1")
-    @Max(value = 10, message = "Number of seats per room cannot exceed 10")
+    @Column(nullable = false)
     private Integer numberOfSeatsPerRoom;
 
-    @NotNull
-    @Positive
+    @Column(nullable = false)
     private Double chargesPerSemester;
 
-    @NotNull
+    @Column(nullable = false)
     private boolean isBoysHostel;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -57,5 +48,4 @@ public class Hostel {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
 }

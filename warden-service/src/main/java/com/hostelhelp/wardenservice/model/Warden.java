@@ -1,14 +1,11 @@
 package com.hostelhelp.wardenservice.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,23 +15,26 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Warden {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @NotNull
+    @Column(nullable = false)
     private String name;
-    @NotNull
-    @Email
-    @Column(unique = true)
+
+    @Column(nullable = false, unique = true)
     private String email;
-    @NotNull
+
+    @Column(nullable = false)
     private String password;
 
-    @NotNull
+    @Column(nullable = false)
     private String gender;
-    @NotNull
+
+    @Column(nullable = false)
     private String phone;
+
     private String hostel;
     private Integer roomNumber;
 
@@ -51,7 +51,4 @@ public class Warden {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
-
-
 }
