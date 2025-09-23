@@ -1,0 +1,24 @@
+server:
+  port: 4004
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: student-service
+          uri: http://student-service:4000
+          predicates:
+            - Path=/students/**
+
+        - id: hostel-service
+          uri: http://hostel-service:4001
+          predicates:
+            - Path=/hostels/**
+
+        - id: warden-service
+          uri: http://warden-service:4002
+          predicates:
+            - Path=/wardens/**

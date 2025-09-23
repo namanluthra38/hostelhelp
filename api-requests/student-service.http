@@ -1,37 +1,36 @@
 ### Get all students
-GET http://localhost:4000/students
+GET http://localhost:4004/students
 Accept: application/json
 
 ###
 
 ### Create a new student
-POST http://localhost:4000/students
+POST http://localhost:4004/students
 Content-Type: application/json
 Accept: application/json
 
 {
   "name": "John Doe",
-  "email": "john.doe@example.com",
+  "email": "naman@example.com",
   "password": "securePass123",
   "graduationYear": 2027,
-  "uid": "23BCS10001",
+  "uid": "23BCS10002",
   "address": "123 Main St, City",
   "dateOfBirth": "2004-05-15",
   "gender": "Male",
   "phone": "9876543210",
-  "hostel": "Hostel A",
   "roomNumber": 101
 }
 
 ###
 
 ### Update an existing student
-PUT http://localhost:4000/students/16f809ea-b801-45d3-af81-b5f5f81b6780
+PUT http://localhost:4004/students/16f809ea-b801-45d3-af81-b5f5f81b6780
 Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "John Doe Updated",
+  "name": "John Doe Updated twice",
   "email": "john.updated@example.com",
   "password": "newPass456",
   "graduationYear": 2027,

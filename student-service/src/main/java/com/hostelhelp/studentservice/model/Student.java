@@ -39,7 +39,7 @@ public class Student {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
+
     private LocalDate dateOfBirth;
 
     @Column(nullable = false)
@@ -48,7 +48,7 @@ public class Student {
     @Column(nullable = false)
     private String phone;
 
-    private String hostel;
+    private String hostelId;
     private Integer roomNumber;
 
     private LocalDateTime createdAt;

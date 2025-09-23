@@ -1,5 +1,6 @@
 package com.hostelhelp.studentservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,12 +21,14 @@ public record StudentRequestDTO(
 
         @NotNull String address,
 
-        @NotNull LocalDate dateOfBirth,
+        @NotNull
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+        LocalDate dateOfBirth,
 
         @NotNull String gender,
 
         @NotNull String phone,
 
-        String hostel,
+        String hostelId,
         Integer roomNumber
 ) {}

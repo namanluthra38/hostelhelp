@@ -17,7 +17,7 @@ public class StudentMapper {
                 .dateOfBirth(dto.dateOfBirth())
                 .gender(dto.gender())
                 .phone(dto.phone())
-                .hostel(dto.hostel())
+                .hostelId(dto.hostelId())
                 .roomNumber(dto.roomNumber())
                 .build();
     }
@@ -33,7 +33,7 @@ public class StudentMapper {
                 student.getDateOfBirth(),
                 student.getGender(),
                 student.getPhone(),
-                student.getHostel(),
+                student.getHostelId(),
                 student.getRoomNumber(),
                 student.getCreatedAt(),
                 student.getUpdatedAt()

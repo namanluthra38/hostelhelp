@@ -1,17 +1,17 @@
 ### Get all students
-GET http://localhost:4002/wardens
+GET http://localhost:4004/wardens
 Accept: application/json
 
 ###
 
 ### Create a new student
-POST http://localhost:4002/wardens
+POST http://localhost:4004/wardens
 Content-Type: application/json
 Accept: application/json
 
 {
   "name": "John Doe",
-  "email": "john.doe@example.com",
+  "email": "john.doe4@example.com",
   "password": "securePass123",
   "gender": "Male",
   "phone": "9876543210",
@@ -27,7 +27,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "John Doe Updated",
+  "name": "John Doe Updated twice",
   "email": "john.updated@example.com",
   "password": "newPass456",
   "gender": "Male",

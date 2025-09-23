@@ -1,19 +1,19 @@
 ### Get all hostels
-GET http://localhost:4001/hostels
+GET http://localhost:4004/hostels
 Accept: application/json
 
 ###
 
 ### Create a new hostel
-POST http://localhost:4001/hostels
+POST http://localhost:4004/hostels
 Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "Zakir A",
+  "name": "Zakir c",
   "hasAC": true,
   "numberOfRooms": 100,
-  "numberOfSeatsPerRoom": 2,
+  "numberOfSeatsPerRoom": 5,
   "isBoysHostel": true,
   "chargesPerSemester": 5000
 }
@@ -21,12 +21,12 @@ Accept: application/json
 ###
 
 ### Update an existing hostel
-PUT http://localhost:4001/hostels/28b1e2ed-e61a-4af8-8a80-36d0fc433ee2
+PUT http://localhost:4004/hostels/6d77df19-9a89-4776-bfa1-661500d2081b
 Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "Zakir A - Updated",
+  "name": "Zakir c",
   "hasAC": false,
   "numberOfRooms": 120,
   "numberOfSeatsPerRoom": 3,
