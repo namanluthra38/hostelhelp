@@ -8,15 +8,24 @@ RUN mvn dependency:go-offline -B
 
 COPY src ./src
 
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
-FROM openjdk:21-jdk AS runner
+FROM eclipse-temurin:21-jre-alpine AS runner
 
 WORKDIR /app
 
-COPY --from=builder ./app/target/auth-service-0.0.1-SNAPSHOT.jar ./app.jar
+# Create non-root user
+RUN addgroup -g 1001 -S appuser && \
+    adduser -S appuser -u 1001 -G appuser
+
+COPY --from=builder /app/target/auth-service-0.0.1-SNAPSHOT.jar ./app.jar
+
+# Change ownership to non-root user
+RUN chown appuser:appuser app.jar
+
+USER appuser
 
 EXPOSE 4005
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
-
+# Add JVM options for better performance
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]

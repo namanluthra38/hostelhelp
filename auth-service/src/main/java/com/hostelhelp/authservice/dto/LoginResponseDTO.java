@@ -3,13 +3,13 @@ package com.hostelhelp.authservice.dto;
 import com.hostelhelp.authservice.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Data
-@NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
 public class LoginResponseDTO {
-    private String token;
+    private final String token;
     private User.Role role;
     private String email;
 }
