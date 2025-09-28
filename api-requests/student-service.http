@@ -1,5 +1,6 @@
 ### Get all students
 GET http://localhost:4004/students
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
@@ -8,13 +9,14 @@ Accept: application/json
 POST http://localhost:4004/students
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{token}}
 
 {
   "name": "John Doe",
-  "email": "naman@example.com",
+  "email": "namangodd@example.com",
   "password": "securePass123",
   "graduationYear": 2027,
-  "uid": "23BCS10002",
+  "uid": "23BCS10005",
   "address": "123 Main St, City",
   "dateOfBirth": "2004-05-15",
   "gender": "Male",

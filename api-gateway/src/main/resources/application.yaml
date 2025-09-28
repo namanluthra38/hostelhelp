@@ -12,13 +12,32 @@ spring:
           uri: http://student-service:4000
           predicates:
             - Path=/students/**
+          filters:
+            - JwtValidation
+
 
         - id: hostel-service
           uri: http://hostel-service:4001
           predicates:
             - Path=/hostels/**
+          filters:
+            - JwtValidation
 
         - id: warden-service
           uri: http://warden-service:4002
           predicates:
             - Path=/wardens/**
+          filters:
+            - JwtValidation
+
+        - id: login-service
+          uri: http://login-service:4005
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+
+
+auth:
+  service:
+    url: http://login-service:4005

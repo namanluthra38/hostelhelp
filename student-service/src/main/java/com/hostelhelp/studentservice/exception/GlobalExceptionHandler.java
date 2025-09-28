@@ -4,6 +4,7 @@ import com.hostelhelp.studentservice.exception.EmailAlreadyExistsException;
 import com.hostelhelp.studentservice.exception.StudentNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -39,6 +40,25 @@ public class GlobalExceptionHandler {
         log.warn(ex.getMessage());
         Map<String,String> errors = new HashMap<>();
         errors.put("student", "Student not found");
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String,String>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        log.warn("Data integrity violation: {}", ex.getMessage());
+        Map<String,String> errors = new HashMap<>();
+        String message = ex.getRootCause() != null ? ex.getRootCause().getMessage() : ex.getMessage();
+        if (message != null) {
+            if (message.contains("student_uid_key")) {
+                errors.put("uid", "UID already exists");
+            } else if (message.contains("student_email_key")) {
+                errors.put("email", "Email already exists");
+            } else {
+                errors.put("database", "Duplicate or invalid data. Please check your input.");
+            }
+        } else {
+            errors.put("database", "Duplicate or invalid data. Please check your input.");
+        }
         return ResponseEntity.badRequest().body(errors);
     }
 }

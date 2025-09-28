@@ -1,6 +1,7 @@
 ### Get all students
 GET http://localhost:4004/wardens
 Accept: application/json
+Authorization: Bearer {{token}}
 
 ###
 
@@ -8,10 +9,11 @@ Accept: application/json
 POST http://localhost:4004/wardens
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{token}}
 
 {
   "name": "John Doe",
-  "email": "john.doe4@example.com",
+  "email": "john.doe5@example.com",
   "password": "securePass123",
   "gender": "Male",
   "phone": "9876543210",

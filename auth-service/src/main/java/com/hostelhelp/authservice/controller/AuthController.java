@@ -14,6 +14,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(
             @RequestBody LoginRequestDTO loginRequestDTO) {
