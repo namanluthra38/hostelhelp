@@ -13,7 +13,7 @@ Authorization: Bearer {{token}}
 
 {
   "name": "John Doe",
-  "email": "john.doe6@example.com",
+  "email": "john.doe9@example.com",
   "password": "securePass123",
   "gender": "Male",
   "phone": "9876543210",
@@ -24,7 +24,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### Update an existing student
-PUT http://localhost:4002/wardens/23242d42-2dc2-4069-9fd8-824040b439be
+PUT http://localhost:4004/wardens/23242d42-2dc2-4069-9fd8-824040b439be
 Content-Type: application/json
 Accept: application/json
 

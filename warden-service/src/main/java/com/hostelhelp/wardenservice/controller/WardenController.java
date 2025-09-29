@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class WardenController {
 
     @GetMapping
     @Operation(summary = "Get all wardens")
+    @PreAuthorize("hasAnyRole('WARDEN','ADMIN')")
     public ResponseEntity<List<WardenResponseDTO>> getWardens() {
         List<WardenResponseDTO> wardens = wardenService.getWardens();
         return ResponseEntity.ok().body(wardens);
@@ -35,6 +37,7 @@ public class WardenController {
 
     @PostMapping
     @Operation(summary = "Create a new warden")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<WardenResponseDTO> createWarden(
             @Validated({Default.class, CreateWardenValidationGroup.class})
             @RequestBody WardenRequestDTO wardenRequestDTO) {
@@ -44,6 +47,7 @@ public class WardenController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a warden")
+    @PreAuthorize("hasAnyRole('WARDEN','ADMIN')")
     public ResponseEntity<WardenResponseDTO> updateWarden(
             @PathVariable UUID id,
             @Validated(Default.class) @RequestBody WardenRequestDTO wardenRequestDTO) {
@@ -52,6 +56,7 @@ public class WardenController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete a warden")
     public ResponseEntity<Void> deleteWarden(@PathVariable UUID id) {
         wardenService.deleteWarden(id);
