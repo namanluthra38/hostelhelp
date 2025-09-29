@@ -2,12 +2,14 @@ package com.hostelhelp.studentservice.service;
 
 import com.hostelhelp.studentservice.dto.StudentRequestDTO;
 import com.hostelhelp.studentservice.dto.StudentResponseDTO;
+import com.hostelhelp.studentservice.dto.UserDTO;
 import com.hostelhelp.studentservice.exception.EmailAlreadyExistsException;
 import com.hostelhelp.studentservice.exception.StudentNotFoundException;
 import com.hostelhelp.studentservice.mapper.StudentMapper;
 import com.hostelhelp.studentservice.model.Student;
 import com.hostelhelp.studentservice.repository.StudentRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,9 +18,11 @@ import java.util.UUID;
 @Service
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final RestTemplate restTemplate;
 
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, RestTemplate restTemplate) {
         this.studentRepository = studentRepository;
+        this.restTemplate = restTemplate;
     }
 
 
@@ -38,7 +42,8 @@ public class StudentService {
 
         Student newStudent = studentRepository.save(
                 StudentMapper.toModel(studentRequestDTO));
-
+        UserDTO userDTO = new UserDTO(newStudent.getEmail(), newStudent.getPassword(), "STUDENT");
+        restTemplate.postForObject("http://api-gateway:4004/auth/register", userDTO, Void.class);
 
         return StudentMapper.toDTO(newStudent);
     }

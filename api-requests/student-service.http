@@ -13,10 +13,10 @@ Authorization: Bearer {{token}}
 
 {
   "name": "John Doe",
-  "email": "namangodd@example.com",
+  "email": "namangodd4@example.com",
   "password": "securePass123",
   "graduationYear": 2027,
-  "uid": "23BCS10005",
+  "uid": "23BCS10095",
   "address": "123 Main St, City",
   "dateOfBirth": "2004-05-15",
   "gender": "Male",
