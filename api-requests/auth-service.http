@@ -9,6 +9,28 @@ Content-Type: application/json
 > {% client.global.set("token", response.body.token) %}
 
 ###
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+
+{
+  "email": "namangodd4@example.com",
+  "password": "securePass123"
+}
+
+> {% client.global.set("token", response.body.token) %}
+
+###
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe6@example.com",
+  "password": "securePass123"
+}
+
+> {% client.global.set("token", response.body.token) %}
+
+###
 
 GET http://localhost:4004/auth/test
 
