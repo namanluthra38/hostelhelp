@@ -1,5 +1,6 @@
 package com.hostelhelp.wardenservice.service;
 
+import com.hostelhelp.wardenservice.dto.UserDTO;
 import com.hostelhelp.wardenservice.dto.WardenRequestDTO;
 import com.hostelhelp.wardenservice.dto.WardenResponseDTO;
 import com.hostelhelp.wardenservice.exception.EmailAlreadyExistsException;
@@ -8,6 +9,7 @@ import com.hostelhelp.wardenservice.mapper.WardenMapper;
 import com.hostelhelp.wardenservice.model.Warden;
 import com.hostelhelp.wardenservice.repository.WardenRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,9 +18,11 @@ import java.util.UUID;
 @Service
 public class WardenService {
     private final WardenRepository wardenRepository;
+    private final RestTemplate restTemplate;
 
-    public WardenService(WardenRepository wardenRepository) {
+    public WardenService(WardenRepository wardenRepository, RestTemplate restTemplate) {
         this.wardenRepository = wardenRepository;
+        this.restTemplate = restTemplate;
     }
 
 
@@ -38,6 +42,9 @@ public class WardenService {
 
         Warden newWarden = wardenRepository.save(
                 WardenMapper.toModel(wardenRequestDTO));
+
+        UserDTO userDTO = new UserDTO(newWarden.getEmail(), newWarden.getPassword(), "WARDEN");
+        restTemplate.postForObject("http://api-gateway:4004/auth/register", userDTO, Void.class);
 
 
         return WardenMapper.toDTO(newWarden);
