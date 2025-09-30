@@ -12,8 +12,8 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "John Doe",
-  "email": "john.doe9@example.com",
+  "name": "Ravi",
+  "email": "ravi@example.com",
   "password": "securePass123",
   "gender": "Male",
   "phone": "9876543210",

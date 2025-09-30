@@ -1,6 +1,7 @@
 ### Get all hostels
 GET http://localhost:4004/hostels
 Accept: application/json
+Authorization: Bearer {{token}}
 
 ###
 
@@ -8,9 +9,10 @@ Accept: application/json
 POST http://localhost:4004/hostels
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{token}}
 
 {
-  "name": "Zakir c",
+  "name": "NC2",
   "hasAC": true,
   "numberOfRooms": 100,
   "numberOfSeatsPerRoom": 5,
@@ -21,12 +23,13 @@ Accept: application/json
 ###
 
 ### Update an existing hostel
-PUT http://localhost:4004/hostels/6d77df19-9a89-4776-bfa1-661500d2081b
+PUT http://localhost:4004/hostels/db4954b0-8337-4b60-a10e-32786d437ce3
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{token}}
 
 {
-  "name": "Zakir c",
+  "name": "NC2",
   "hasAC": false,
   "numberOfRooms": 120,
   "numberOfSeatsPerRoom": 3,
@@ -37,5 +40,5 @@ Accept: application/json
 ###
 
 ### Delete a hostel
-DELETE http://localhost:4001/hostels/{{hostelId}}
+DELETE http://localhost:4004/hostels/6d77df19-9a89-4776-bfa1-661500d2081b
 Accept: application/json

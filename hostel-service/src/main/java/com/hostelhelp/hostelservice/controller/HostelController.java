@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,7 @@ public class HostelController {
 
     @PostMapping
     @Operation(summary = "Create a new hostel")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<HostelResponseDTO> createHostel(
             @Validated({Default.class, CreateHostelValidationGroup.class})
             @RequestBody HostelRequestDTO hostelRequestDTO) {
@@ -45,6 +47,7 @@ public class HostelController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a hostel")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WARDEN')")
     public ResponseEntity<HostelResponseDTO> updateHostel(
             @PathVariable UUID id,
             @Validated(Default.class) @RequestBody HostelRequestDTO hostelRequestDTO) {
@@ -54,6 +57,7 @@ public class HostelController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a hostel")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteHostel(@PathVariable UUID id) {
         hostelService.deleteHostel(id);
         return ResponseEntity.noContent().build();
