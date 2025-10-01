@@ -3,14 +3,19 @@ package com.hostelhelp.studentservice.mapper;
 import com.hostelhelp.studentservice.dto.StudentRequestDTO;
 import com.hostelhelp.studentservice.dto.StudentResponseDTO;
 import com.hostelhelp.studentservice.model.Student;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Repository;
+
 
 public class StudentMapper {
-
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     public static Student toModel(StudentRequestDTO dto) {
         return Student.builder()
                 .name(dto.name())
                 .email(dto.email())
-                .password(dto.password())
+                .password(passwordEncoder.encode(dto.password()))
                 .graduationYear(dto.graduationYear())
                 .uid(dto.uid())
                 .address(dto.address())

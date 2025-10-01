@@ -12,11 +12,11 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "John Doe",
-  "email": "namangodd4@example.com",
+  "name": "nam",
+  "email": "nam@example.com",
   "password": "securePass123",
   "graduationYear": 2027,
-  "uid": "23BCS10095",
+  "uid": "23BCS1000012",
   "address": "123 Main St, City",
   "dateOfBirth": "2004-05-15",
   "gender": "Male",
@@ -44,9 +44,38 @@ Accept: application/json
   "hostel": "Hostel B",
   "roomNumber": 202
 }
-
+### Get an student
+GET http://localhost:4004/students/8d3791c8-8269-4f5d-a27e-0f7d27be0497
+Content-Type: application/json
+Authorization: Bearer {{token}}
 ###
 
-### Delete a student
-DELETE http://localhost:4000/students/c4646089-2611-48b1-881a-20758f292f63
+### Get all students
+GET http://localhost:4004/students/me
+Authorization: Bearer {{token}}
 Accept: application/json
+
+### Delete a student
+DELETE http://localhost:4004/students/f4983701-dee3-45ae-a629-88e6273c9585
+Accept: application/json
+Authorization: Bearer {{token}}
+###
+PUT http://localhost:4004/students/me
+Content-Type: application/json
+Authorization: Bearer {{token}}
+Accept: application/json
+
+{
+
+  "name": "naman",
+  "email": "nam@example.com",
+  "password": "securePass123",
+  "graduationYear": 2027,
+  "uid": "23BCS1000012",
+  "address": "123 Main St, City",
+  "dateOfBirth": "2004-05-15",
+  "gender": "Male",
+  "phone": "9876543210",
+  "roomNumber": 101
+
+}

@@ -13,7 +13,7 @@ POST http://localhost:4004/auth/login
 Content-Type: application/json
 
 {
-  "email": "namangodd4@example.com",
+  "email": "nam@example.com",
   "password": "securePass123"
 }
 

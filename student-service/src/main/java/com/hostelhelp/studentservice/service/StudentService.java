@@ -8,6 +8,8 @@ import com.hostelhelp.studentservice.exception.StudentNotFoundException;
 import com.hostelhelp.studentservice.mapper.StudentMapper;
 import com.hostelhelp.studentservice.model.Student;
 import com.hostelhelp.studentservice.repository.StudentRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,21 +18,26 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class StudentService {
     private final StudentRepository studentRepository;
     private final RestTemplate restTemplate;
 
-    public StudentService(StudentRepository studentRepository, RestTemplate restTemplate) {
-        this.studentRepository = studentRepository;
-        this.restTemplate = restTemplate;
-    }
+
+
 
 
     public List<StudentResponseDTO> getStudents() {
         List<Student> students = studentRepository.findAll();
 
         return students.stream().map(StudentMapper::toDTO).toList();
+    }
 
+    public StudentResponseDTO getStudent(UUID id) {
+        Student student = studentRepository.findById(id).orElseThrow(() ->
+                new StudentNotFoundException("Student not found with id " + id));
+
+        return StudentMapper.toDTO(student);
     }
 
     public StudentResponseDTO createStudent(StudentRequestDTO studentRequestDTO) {
@@ -39,6 +46,7 @@ public class StudentService {
                     "A student with this email " + "already exists"
                             + studentRequestDTO.email());
         }
+
 
         Student newStudent = studentRepository.save(
                 StudentMapper.toModel(studentRequestDTO));
@@ -71,5 +79,22 @@ public class StudentService {
             throw new StudentNotFoundException("Student not found with id " + id);
         }
         studentRepository.deleteById(id);
+    }
+
+    public StudentResponseDTO getStudentByEmail(String email) {
+        Student student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with email " + email));
+        return StudentMapper.toDTO(student);
+    }
+
+    public StudentResponseDTO updateStudentByEmail(String email, StudentRequestDTO studentRequestDTO) {
+        Student student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with email " + email));
+
+        student.setPhone(studentRequestDTO.phone());
+        student.setAddress(studentRequestDTO.address());
+        student.setDateOfBirth(studentRequestDTO.dateOfBirth());
+        Student updatedStudent = studentRepository.save(student);
+        return StudentMapper.toDTO(updatedStudent);
     }
 }

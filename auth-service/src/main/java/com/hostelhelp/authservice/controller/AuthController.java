@@ -56,7 +56,7 @@ public class AuthController {
     public ResponseEntity<Void> register(@RequestBody UserDTO userDTO) {
         User user = User.builder()
                 .email(userDTO.email())
-                .password(passwordEncoder.encode(userDTO.password()))
+                .password(userDTO.password())
                 .role(User.Role.valueOf(userDTO.role()))
                 .build();
 
