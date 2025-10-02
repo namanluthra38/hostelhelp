@@ -1,7 +1,6 @@
 ### Get all hostels
 GET http://localhost:4004/hostels
 Accept: application/json
-Authorization: Bearer {{token}}
 
 ###
 

@@ -9,14 +9,13 @@ Accept: application/json
 POST http://localhost:4004/students
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer {{token}}
 
 {
-  "name": "naman",
-  "email": "namanlut@example.com",
+  "name": "arpit",
+  "email": "arpit@example.com",
   "password": "securePass123",
   "graduationYear": 2027,
-  "uid": "23BCS1000013",
+  "uid": "23BCS1000113",
   "address": "123 Main St, City",
   "dateOfBirth": "2004-05-15",
   "gender": "Male",
