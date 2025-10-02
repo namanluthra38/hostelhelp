@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,6 +63,25 @@ public class AuthController {
 
         userService.save(user);
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/user/{email}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String email) {
+        if (!userService.existsByEmail(email)) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        userService.deleteByEmail(email);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/user/email/{email}")
+    public ResponseEntity<UUID> getUserIdByEmail(@PathVariable String email) {
+        Optional<User> userOptional = userService.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(userOptional.get().getId());
     }
 
 }

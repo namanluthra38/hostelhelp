@@ -12,11 +12,11 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "nam",
-  "email": "nam@example.com",
+  "name": "naman",
+  "email": "namanl@example.com",
   "password": "securePass123",
   "graduationYear": 2027,
-  "uid": "23BCS1000012",
+  "uid": "23BCS1000013",
   "address": "123 Main St, City",
   "dateOfBirth": "2004-05-15",
   "gender": "Male",
@@ -56,7 +56,7 @@ Authorization: Bearer {{token}}
 Accept: application/json
 
 ### Delete a student
-DELETE http://localhost:4004/students/f4983701-dee3-45ae-a629-88e6273c9585
+DELETE http://localhost:4004/students/a197a41f-ad68-46e5-a19f-4ec0777c4cde
 Accept: application/json
 Authorization: Bearer {{token}}
 ###

@@ -1,6 +1,7 @@
 package com.hostelhelp.authservice.service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import com.hostelhelp.authservice.model.User;
 import com.hostelhelp.authservice.repository.UserRepository;
@@ -20,5 +21,21 @@ public class UserService {
 
     public void save(User user) {
         userRepository.save(user);
+    }
+
+    public void deleteById(UUID id) {
+        userRepository.deleteById(id);
+    }
+
+    public boolean existsById(UUID id) {
+        return userRepository.existsById(id);
+    }
+
+    public void deleteByEmail(String email) {
+        userRepository.deleteByEmail(email);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }

@@ -2,6 +2,7 @@ package com.hostelhelp.studentservice.controller;
 
 import com.hostelhelp.studentservice.dto.StudentRequestDTO;
 import com.hostelhelp.studentservice.dto.StudentResponseDTO;
+import com.hostelhelp.studentservice.dto.UpdateStudentDTO;
 import com.hostelhelp.studentservice.exception.StudentNotFoundException;
 import com.hostelhelp.studentservice.service.StudentService;
 import com.hostelhelp.studentservice.validation.CreateStudentValidationGroup;
@@ -90,10 +91,10 @@ public class StudentController {
     @Operation(summary = "Update current student's profile")
     @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<StudentResponseDTO> updateCurrentStudentProfile(
-            @Validated(Default.class) @RequestBody StudentRequestDTO studentRequestDTO) {
+            @Validated(Default.class) @RequestBody UpdateStudentDTO updateStudentDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        StudentResponseDTO student = studentService.updateStudentByEmail(email, studentRequestDTO);
+        StudentResponseDTO student = studentService.updateStudentByEmail(email, updateStudentDTO);
         return ResponseEntity.ok().body(student);
     }
 }
