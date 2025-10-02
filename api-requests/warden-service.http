@@ -3,6 +3,16 @@ GET http://localhost:4004/wardens
 Accept: application/json
 Authorization: Bearer {{token}}
 
+
+###
+GET http://localhost:4004/wardens/de1e1df0-96f4-4ad8-93d8-323928c1340c
+Accept: application/json
+Authorization: Bearer {{token}}
+###
+
+GET http://localhost:4004/wardens/me
+Accept: application/json
+Authorization: Bearer {{token}}
 ###
 
 ### Create a new student
@@ -13,12 +23,12 @@ Authorization: Bearer {{token}}
 
 {
   "name": "Ravi",
-  "email": "ravi@example.com",
+  "email": "ravi5@example.com",
   "password": "securePass123",
   "gender": "Male",
   "phone": "9876543210",
   "hostel": "Hostel A",
-  "roomNumber": 101
+  "roomNumber": 181
 }
 
 ###
@@ -41,6 +51,6 @@ Accept: application/json
 ###
 
 ### Delete a student
-DELETE http://localhost:4002/wardens/23242d42-2dc2-4069-9fd8-824040b439be
-
+DELETE http://localhost:4004/wardens/f7a1352a-a7b4-475b-a1ae-9e24154ec4eb
 Accept: application/json
+Authorization: Bearer {{token}}

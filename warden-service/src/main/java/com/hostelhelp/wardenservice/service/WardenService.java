@@ -33,6 +33,13 @@ public class WardenService {
 
     }
 
+    public WardenResponseDTO getWarden(UUID id) {
+        Warden warden = wardenRepository.findById(id).orElseThrow(() ->
+                new WardenNotFoundException("Warden not found with id " + id));
+
+        return WardenMapper.toDTO(warden);
+    }
+
     public WardenResponseDTO createWarden(WardenRequestDTO wardenRequestDTO) {
         if (wardenRepository.existsByEmail(wardenRequestDTO.email())) {
             throw new EmailAlreadyExistsException(
@@ -66,10 +73,24 @@ public class WardenService {
         return WardenMapper.toDTO(updatedWarden);
     }
 
+    public WardenResponseDTO getWardenByEmail(String email) {
+        Warden warden = wardenRepository.findByEmail(email)
+                .orElseThrow(() -> new WardenNotFoundException("Warden not found with email " + email));
+        return WardenMapper.toDTO(warden);
+    }
+
     public void deleteWarden(UUID id) {
-        if (!wardenRepository.existsById(id)) {
-            throw new WardenNotFoundException("Warden not found with id " + id);
-        }
+        Warden warden = wardenRepository.findById(id)
+                .orElseThrow(() -> new WardenNotFoundException("Warden not found with id " + id));
+        String email = warden.getEmail();
         wardenRepository.deleteById(id);
+        // Delete user in auth-service
+        try {
+            String deleteUrl = "http://api-gateway:4004/auth/user/" + email;
+            restTemplate.delete(deleteUrl);
+        } catch (Exception e) {
+            System.err.println("Failed to delete user in auth-service for email: " + email);
+            e.printStackTrace();
+        }
     }
 }

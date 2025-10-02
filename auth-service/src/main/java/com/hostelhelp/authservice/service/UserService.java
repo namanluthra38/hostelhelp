@@ -7,6 +7,7 @@ import com.hostelhelp.authservice.model.User;
 import com.hostelhelp.authservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class UserService {
     public boolean existsById(UUID id) {
         return userRepository.existsById(id);
     }
-
+    @Transactional
     public void deleteByEmail(String email) {
         userRepository.deleteByEmail(email);
     }

@@ -3,6 +3,7 @@ package com.hostelhelp.wardenservice.controller;
 
 import com.hostelhelp.wardenservice.dto.WardenRequestDTO;
 import com.hostelhelp.wardenservice.dto.WardenResponseDTO;
+import com.hostelhelp.wardenservice.exception.WardenNotFoundException;
 import com.hostelhelp.wardenservice.service.WardenService;
 import com.hostelhelp.wardenservice.validation.CreateWardenValidationGroup;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +38,18 @@ public class WardenController {
         return ResponseEntity.ok().body(wardens);
     }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "Get a student by ID")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<WardenResponseDTO> getStudent(@PathVariable UUID id) {
+        try {
+            WardenResponseDTO student = wardenService.getWarden(id);
+            return ResponseEntity.ok().body(student);
+        } catch (WardenNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping
     @Operation(summary = "Create a new warden")
     @PreAuthorize("hasRole('ADMIN')")
@@ -47,12 +62,21 @@ public class WardenController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a warden")
-    @PreAuthorize("hasAnyRole('WARDEN','ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<WardenResponseDTO> updateWarden(
             @PathVariable UUID id,
             @Validated(Default.class) @RequestBody WardenRequestDTO wardenRequestDTO) {
         WardenResponseDTO wardenResponseDTO = wardenService.updateWarden(id, wardenRequestDTO);
         return ResponseEntity.ok().body(wardenResponseDTO);
+    }
+    @GetMapping("/me")
+    @Operation(summary = "Get current student's profile")
+    @PreAuthorize("hasRole('WARDEN')")
+    public ResponseEntity<WardenResponseDTO> getCurrentStudentProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        WardenResponseDTO student = wardenService.getWardenByEmail(email);
+        return ResponseEntity.ok().body(student);
     }
 
     @DeleteMapping("/{id}")
