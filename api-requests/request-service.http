@@ -1,0 +1,40 @@
+### Create a new request
+POST http://localhost:4003/requests
+Content-Type: application/json
+
+{
+  "studentId": "1234-uuid",
+  "type": "HOSTEL_JOIN",
+  "details": {
+    "roomPreference": "single",
+    "hostelBlock": "A"
+  }
+}
+
+### Get all requests
+GET http://localhost:4003/requests
+
+### Get requests by studentId
+GET http://localhost:4003/requests/student/1234-uuid
+
+### Get request by id
+GET http://localhost:4003/requests/abcd-uuid
+
+### Update status (partial update)
+PATCH http://localhost:4003/requests/abcd-uuid/status?status=APPROVED&reviewedBy=warden-uuid
+
+### Full update (replace entire request)
+PUT http://localhost:4003/requests/abcd-uuid
+Content-Type: application/json
+
+{
+  "studentId": "1234-uuid",
+  "type": "HOSTEL_LEAVE",
+  "details": {
+    "leaveFrom": "2025-10-10",
+    "leaveTo": "2025-10-20"
+  }
+}
+
+### Delete a request
+DELETE http://localhost:4003/requests/abcd-uuid
