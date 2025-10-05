@@ -108,7 +108,7 @@ public class RequestService {
         }
 
         // Step 1: Verify student exists
-        String getUrl = "http://localhost:4004/students/" + studentId;
+        String getUrl = "http://localhost:4000/students/" + studentId;
         try {
             log.info("Checking if student exists: {}", studentId);
 
@@ -137,33 +137,51 @@ public class RequestService {
         }
 
         // Step 2: Assign hostel
-        String assignUrl = "http://localhost:4004/students/" + studentId + "/assign-hostel";
-        var assignHostelDTO = Map.of("hostelId", hostelId);
+//        String assignUrl = "http://localhost:4000/students/" + studentId + "/assign-hostel";
+//        var assignHostelDTO = Map.of("hostelId", hostelId);
+//
+//        try {
+//            log.info("Assigning hostel {} to student {}", hostelId, studentId);
+//
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setBearerAuth(token);
+//            headers.setContentType(MediaType.APPLICATION_JSON);
+//            HttpEntity<Map<String, String>> entity = new HttpEntity<>(assignHostelDTO, headers);
+//
+//            restTemplate.exchange(assignUrl, HttpMethod.POST, entity, Void.class);
+//            log.info("Hostel {} assigned successfully to student {}", hostelId, studentId);
+//        } catch (HttpClientErrorException e) {
+//            if (e.getStatusCode().value() == 403) {
+//                log.error("Forbidden when calling student-service for student {}: {}", studentId, e.getMessage());
+//                throw new RuntimeException("Forbidden call to student-service. Check permissions.");
+//            } else if (e.getStatusCode().value() == 401) {
+//                log.error("Unauthorized when calling student-service for student {}: {}", studentId, e.getMessage());
+//                throw new RuntimeException("Unauthorized call to student-service. Check security config.");
+//            } else {
+//                log.error("Unexpected error assigning hostel for student {}: {}", studentId, e.getMessage());
+//                throw new RuntimeException("Unexpected error assigning hostel: " + e.getMessage());
+//            }
+//        }
 
+        // Step 3: Assign room in hostel via RoomController
+        String roomAssignUrl = "http://localhost:4001/hostels/rooms/allocate?hostelId=" + hostelId + "&studentId=" + studentId;
         try {
-            log.info("Assigning hostel {} to student {}", hostelId, studentId);
-
+            log.info("Assigning room in hostel {} to student {} via RoomController", hostelId, studentId);
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(token);
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<Map<String, String>> entity = new HttpEntity<>(assignHostelDTO, headers);
-
-            restTemplate.exchange(assignUrl, HttpMethod.POST, entity, Void.class);
-            log.info("Hostel {} assigned successfully to student {}", hostelId, studentId);
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
+            restTemplate.exchange(roomAssignUrl, HttpMethod.POST, entity, Void.class);
+            log.info("Room assigned successfully in hostel {} to student {}", hostelId, studentId);
         } catch (HttpClientErrorException e) {
-            if (e.getStatusCode().value() == 403) {
-                log.error("Forbidden when calling student-service for student {}: {}", studentId, e.getMessage());
-                throw new RuntimeException("Forbidden call to student-service. Check permissions.");
-            } else if (e.getStatusCode().value() == 401) {
-                log.error("Unauthorized when calling student-service for student {}: {}", studentId, e.getMessage());
-                throw new RuntimeException("Unauthorized call to student-service. Check security config.");
+            if (e.getStatusCode().value() == 404) {
+                log.error("Room assignment failed: student or hostel not found for student {} in hostel {}", studentId, hostelId);
+            } else if (e.getStatusCode().value() == 403) {
+                log.error("Forbidden when assigning room for student {}: {}", studentId, e.getMessage());
             } else {
-                log.error("Unexpected error assigning hostel for student {}: {}", studentId, e.getMessage());
-                throw new RuntimeException("Unexpected error assigning hostel: " + e.getMessage());
+                log.error("Unexpected error assigning room for student {}: {}", studentId, e.getMessage());
             }
         } catch (Exception e) {
-            log.error("Unexpected error assigning hostel for student {}: {}", studentId, e.getMessage());
-            throw new RuntimeException("Unexpected error assigning hostel: " + e.getMessage());
+            log.error("Error assigning room for student {}: {}", studentId, e.getMessage());
         }
     }
 }

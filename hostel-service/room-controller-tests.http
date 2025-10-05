@@ -1,0 +1,46 @@
+### PASS: Create Room
+POST http://localhost:4002/hostels/rooms
+Content-Type: application/json
+
+{
+  "roomNumber": "101",
+  "hostelId": "b1a2c3d4-e5f6-7890-abcd-1234567890ab",
+  "capacity": 2
+}
+
+### FAIL: Create Room (missing required field)
+POST http://localhost:4002/hostels/rooms
+Content-Type: application/json
+
+{
+  "hostelId": "b1a2c3d4-e5f6-7890-abcd-1234567890ab"
+}
+
+### PASS: Get All Rooms
+GET http://localhost:4002/hostels/rooms
+
+### FAIL: Get All Rooms (unauthorized)
+GET http://localhost:4002/hostels/rooms
+Authorization: Bearer invalid_token
+
+### PASS: Get Room by ID
+GET http://localhost:4002/hostels/rooms/11111111-2222-3333-4444-555555555555
+
+### FAIL: Get Room by ID (invalid UUID)
+GET http://localhost:4002/hostels/rooms/invalid-uuid
+
+### PASS: Delete Room
+DELETE http://localhost:4002/hostels/rooms/11111111-2222-3333-4444-555555555555
+
+### FAIL: Delete Room (non-existent room)
+DELETE http://localhost:4002/hostels/rooms/00000000-0000-0000-0000-000000000000
+
+### PASS: Allocate Student
+POST http://localhost:4002/hostels/rooms/allocate?hostelId=b1a2c3d4-e5f6-7890-abcd-1234567890ab&studentId=99999999-8888-7777-6666-555555555555
+
+### FAIL: Allocate Student (student not found)
+POST http://localhost:4002/hostels/rooms/allocate?hostelId=b1a2c3d4-e5f6-7890-abcd-1234567890ab&studentId=00000000-0000-0000-0000-000000000000
+
+### FAIL: Allocate Student (missing params)
+POST http://localhost:4002/hostels/rooms/allocate?hostelId=b1a2c3d4-e5f6-7890-abcd-1234567890ab
+

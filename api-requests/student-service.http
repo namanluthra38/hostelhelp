@@ -87,3 +87,13 @@ Accept: application/json
   "roomNumber": 101
 
 }
+###
+POST http://localhost:4000/students/22afce18-8415-41f2-a48a-e819e6111510/assign-room
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+    "hostelId" : "ZB",
+    "roomId" : "101"
+}

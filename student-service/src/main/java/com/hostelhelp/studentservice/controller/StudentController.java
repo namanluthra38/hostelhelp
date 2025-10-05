@@ -1,6 +1,6 @@
 package com.hostelhelp.studentservice.controller;
 
-import com.hostelhelp.studentservice.dto.AssignHostelDTO;
+import com.hostelhelp.studentservice.dto.AssignRoomDTO;
 import com.hostelhelp.studentservice.dto.StudentRequestDTO;
 import com.hostelhelp.studentservice.dto.StudentResponseDTO;
 import com.hostelhelp.studentservice.dto.UpdateStudentDTO;
@@ -100,22 +100,15 @@ public class StudentController {
         return ResponseEntity.ok().body(student);
     }
 
-    @PostMapping("/{id}/assign-hostel")
-    @Operation(summary = "Assign a hostel to a student")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> assignHostel(@PathVariable UUID id, @RequestBody AssignHostelDTO dto) {
-        try {
-
-            StudentResponseDTO updatedStudent = studentService.assignHostel(id, dto);
-            log.info("Student {} assigned to hostel {}", id, dto.hostelId());
-            return ResponseEntity.ok(updatedStudent);
-        } catch (StudentNotFoundException e) {
-            log.warn("Student not found: {}", id);
-            return ResponseEntity.status(404).body("Student not found with id: " + id);
-        } catch (Exception e) {
-            log.error("Error assigning hostel to student {}: {}", id, e.getMessage());
-            return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
-        }
+    @PostMapping("/{studentId}/assign-room")
+    @Operation(summary = "Assign a room to a student")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WARDEN')")
+    public ResponseEntity<StudentResponseDTO> assignRoom(
+            @PathVariable UUID studentId,
+            @RequestBody AssignRoomDTO dto
+    ) {
+        StudentResponseDTO updatedStudent = studentService.assignRoom(studentId, dto);
+        return ResponseEntity.ok(updatedStudent);
     }
 
 }

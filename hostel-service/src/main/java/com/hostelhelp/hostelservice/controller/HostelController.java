@@ -4,6 +4,7 @@ package com.hostelhelp.hostelservice.controller;
 
 import com.hostelhelp.hostelservice.dto.HostelRequestDTO;
 import com.hostelhelp.hostelservice.dto.HostelResponseDTO;
+import com.hostelhelp.hostelservice.exception.HostelNotFoundException;
 import com.hostelhelp.hostelservice.service.HostelService;
 import com.hostelhelp.hostelservice.validation.CreateHostelValidationGroup;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +34,17 @@ public class HostelController {
     public ResponseEntity<List<HostelResponseDTO>> getHostels() {
         List<HostelResponseDTO> hostels = hostelService.getHostels();
         return ResponseEntity.ok().body(hostels);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get a Hostel by ID")
+    public ResponseEntity<HostelResponseDTO> getStudent(@PathVariable UUID id) {
+        try {
+            HostelResponseDTO student = hostelService.getHostel(id);
+            return ResponseEntity.ok().body(student);
+        } catch (HostelNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping

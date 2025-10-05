@@ -27,6 +27,13 @@ public class HostelService {
         return hostels.stream().map(HostelMapper::toDTO).toList();
     }
 
+    public HostelResponseDTO getHostel(UUID id) {
+        Hostel hostel = hostelRepository.findById(id).orElseThrow(() ->
+                new HostelNotFoundException("Hostel not found with id " + id));
+
+        return HostelMapper.toDTO(hostel);
+    }
+
     public HostelResponseDTO createHostel(HostelRequestDTO hostelRequestDTO) {
         if (hostelRepository.existsByName(hostelRequestDTO.name())) {
             throw new HostelAlreadyExistsException(
@@ -56,7 +63,6 @@ public class HostelService {
         hostel.setName(hostelRequestDTO.name());
         hostel.setHasAC(hostelRequestDTO.hasAC());
         hostel.setNumberOfRooms(hostelRequestDTO.numberOfRooms());
-        hostel.setNumberOfSeatsPerRoom(hostelRequestDTO.numberOfSeatsPerRoom());
         hostel.setChargesPerSemester(hostelRequestDTO.chargesPerSemester());
         hostel.setBoysHostel(hostelRequestDTO.isBoysHostel());
 

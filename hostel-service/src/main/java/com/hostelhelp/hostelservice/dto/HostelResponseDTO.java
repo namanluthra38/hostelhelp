@@ -8,7 +8,6 @@ public record HostelResponseDTO(
         String name,
         boolean hasAC,
         int numberOfRooms,
-        int numberOfSeatsPerRoom,
         double chargesPerSemester,
         boolean isBoysHostel,
         LocalDateTime createdAt,

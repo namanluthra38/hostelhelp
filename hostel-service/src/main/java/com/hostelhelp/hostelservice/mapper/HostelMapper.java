@@ -12,7 +12,6 @@ public class HostelMapper {
                 .name(dto.name())
                 .hasAC(dto.hasAC())
                 .numberOfRooms(dto.numberOfRooms())
-                .numberOfSeatsPerRoom(dto.numberOfSeatsPerRoom())
                 .chargesPerSemester(dto.chargesPerSemester())
                 .isBoysHostel(dto.isBoysHostel())
                 .build();
@@ -24,7 +23,6 @@ public class HostelMapper {
                 entity.getName(),
                 entity.isHasAC(),
                 entity.getNumberOfRooms(),
-                entity.getNumberOfSeatsPerRoom(),
                 entity.getChargesPerSemester(),
                 entity.isBoysHostel(),
                 entity.getCreatedAt(),

@@ -39,7 +39,7 @@ public class WardenController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get a student by ID")
+    @Operation(summary = "Get a warden by ID")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<WardenResponseDTO> getStudent(@PathVariable UUID id) {
         try {
@@ -49,6 +49,8 @@ public class WardenController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
 
     @PostMapping
     @Operation(summary = "Create a new warden")

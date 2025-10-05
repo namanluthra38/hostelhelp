@@ -26,8 +26,6 @@ public class Hostel {
     @Column(nullable = false)
     private Integer numberOfRooms;
 
-    @Column(nullable = false)
-    private Integer numberOfSeatsPerRoom;
 
     @Column(nullable = false)
     private Double chargesPerSemester;

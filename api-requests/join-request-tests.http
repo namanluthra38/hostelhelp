@@ -3,11 +3,10 @@ POST http://localhost:4003/requests/join
 Content-Type: application/json
 
 {
-  "studentId": "d1315365-eccc-4c02-ac82-53bee61be9b9",
+  "studentId": "aea9cdc8-3d7b-4c41-9e43-bbd607c9d764",
   "type": "HOSTEL_JOIN",
   "details": {
-    "hostelId": "ZB",
-    "roomNumber": 1
+    "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
   }
 }
 

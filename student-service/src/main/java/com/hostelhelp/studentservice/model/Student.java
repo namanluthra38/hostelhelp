@@ -49,7 +49,7 @@ public class Student {
     private String phone;
 
     private String hostelId;
-    private Integer roomNumber;
+    private String roomId;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -19,10 +19,7 @@ public record HostelRequestDTO(
         @Max(value = 1000, message = "Number of rooms cannot exceed 1000")
         Integer numberOfRooms,
 
-        @NotNull(message = "Number of seats per room is required")
-        @Min(value = 1, message = "Number of seats per room must be at least 1")
-        @Max(value = 10, message = "Number of seats per room cannot exceed 10")
-        Integer numberOfSeatsPerRoom,
+
 
         @NotNull(message = "Charges per semester is required")
         @Positive(message = "Charges per semester must be positive")

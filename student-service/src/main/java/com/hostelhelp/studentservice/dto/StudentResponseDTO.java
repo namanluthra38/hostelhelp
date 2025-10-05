@@ -15,7 +15,7 @@ public record StudentResponseDTO(
         String gender,
         String phone,
         String hostelId,
-        Integer roomNumber,
+        String roomId,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {}

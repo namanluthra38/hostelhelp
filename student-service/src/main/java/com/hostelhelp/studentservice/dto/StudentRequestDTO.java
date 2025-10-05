@@ -27,8 +27,7 @@ public record StudentRequestDTO(
 
         @NotNull String gender,
 
-        @NotNull String phone,
+        @NotNull String phone
 
-        String hostelId,
-        Integer roomNumber
+
 ) {}

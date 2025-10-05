@@ -1,6 +1,6 @@
 package com.hostelhelp.studentservice.service;
 
-import com.hostelhelp.studentservice.dto.AssignHostelDTO;
+import com.hostelhelp.studentservice.dto.AssignRoomDTO;
 import com.hostelhelp.studentservice.dto.StudentRequestDTO;
 import com.hostelhelp.studentservice.dto.StudentResponseDTO;
 import com.hostelhelp.studentservice.dto.UpdateStudentDTO;
@@ -11,12 +11,9 @@ import com.hostelhelp.studentservice.mapper.StudentMapper;
 import com.hostelhelp.studentservice.model.Student;
 import com.hostelhelp.studentservice.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -109,13 +106,13 @@ public class StudentService {
         return StudentMapper.toDTO(updatedStudent);
     }
 
-    public StudentResponseDTO assignHostel(UUID studentId, AssignHostelDTO dto) {
+
+    public StudentResponseDTO assignRoom(UUID studentId, AssignRoomDTO dto) {
         Student student = studentRepository.findById(studentId)
-            .orElseThrow(() -> new StudentNotFoundException("Student not found with id " + studentId));
-        System.out.println("found student: ");
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with id " + studentId));
+        student.setRoomId(dto.roomId());
         student.setHostelId(dto.hostelId());
-        student.setRoomNumber(dto.roomNumber());
-        Student updatedStudent = studentRepository.save(student);
-        return StudentMapper.toDTO(updatedStudent);
+        studentRepository.save(student);
+        return StudentMapper.toDTO(student);
     }
 }
