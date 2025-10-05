@@ -17,7 +17,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/requests/**").permitAll() // allow all requests to /api/requests
                         .anyRequest().authenticated()
-                ); // optional: allows basic auth if needed
+                );
 
         return http.build();
     }

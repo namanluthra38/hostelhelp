@@ -1,5 +1,6 @@
 package com.hostelhelp.studentservice.service;
 
+import com.hostelhelp.studentservice.dto.AssignHostelDTO;
 import com.hostelhelp.studentservice.dto.StudentRequestDTO;
 import com.hostelhelp.studentservice.dto.StudentResponseDTO;
 import com.hostelhelp.studentservice.dto.UpdateStudentDTO;
@@ -104,6 +105,16 @@ public class StudentService {
         student.setPhone(updateStudentDTO.phone());
         student.setAddress(updateStudentDTO.address());
         student.setDateOfBirth(updateStudentDTO.dateOfBirth());
+        Student updatedStudent = studentRepository.save(student);
+        return StudentMapper.toDTO(updatedStudent);
+    }
+
+    public StudentResponseDTO assignHostel(UUID studentId, AssignHostelDTO dto) {
+        Student student = studentRepository.findById(studentId)
+            .orElseThrow(() -> new StudentNotFoundException("Student not found with id " + studentId));
+        System.out.println("found student: ");
+        student.setHostelId(dto.hostelId());
+        student.setRoomNumber(dto.roomNumber());
         Student updatedStudent = studentRepository.save(student);
         return StudentMapper.toDTO(updatedStudent);
     }

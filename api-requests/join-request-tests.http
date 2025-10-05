@@ -1,0 +1,59 @@
+### Passing request: valid join request
+POST http://localhost:4003/requests/join
+Content-Type: application/json
+
+{
+  "studentId": "d1315365-eccc-4c02-ac82-53bee61be9b9",
+  "type": "HOSTEL_JOIN",
+  "details": {
+    "hostelId": "ZB",
+    "roomNumber": 1
+  }
+}
+
+### Failing request: missing studentId
+POST http://localhost:4003/requests/join
+Content-Type: application/json
+
+{
+  "type": "HOSTEL_JOIN",
+  "details": {
+    "hostelName": "A-Block",
+    "roomType": "Single"
+  }
+}
+
+### Failing request: wrong type
+POST http://localhost:4003/requests/join
+Content-Type: application/json
+
+{
+  "studentId": "student123",
+  "type": "COMPLAINT",
+  "details": {
+    "issue": "No water"
+  }
+}
+
+### Failing request: details is null
+POST http://localhost:4003/requests/join
+Content-Type: application/json
+
+{
+  "studentId": "student123",
+  "type": "HOSTEL_JOIN",
+  "details": null
+}
+
+### Failing request: duplicate join request (assuming one already exists for student123)
+POST http://localhost:4003/requests/join
+Content-Type: application/json
+
+{
+  "studentId": "student123",
+  "type": "HOSTEL_JOIN",
+  "details": {
+    "hostelName": "A-Block"
+  }
+}
+

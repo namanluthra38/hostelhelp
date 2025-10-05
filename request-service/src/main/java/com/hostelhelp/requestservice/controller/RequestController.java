@@ -4,11 +4,16 @@ import com.hostelhelp.requestservice.dto.CreateRequestDTO;
 import com.hostelhelp.requestservice.dto.RequestResponseDTO;
 import com.hostelhelp.requestservice.model.Request;
 import com.hostelhelp.requestservice.service.RequestService;
+import com.hostelhelp.requestservice.service.StudentNotFoundRemoteException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("requests")
@@ -19,7 +24,7 @@ public class RequestController {
 
     // Create a new request
     @PostMapping
-    public ResponseEntity<RequestResponseDTO> createRequest(@RequestBody CreateRequestDTO dto) {
+    public ResponseEntity<RequestResponseDTO> createRequest(@Valid @RequestBody CreateRequestDTO dto) {
         return ResponseEntity.ok(service.createRequest(dto));
     }
 
@@ -45,14 +50,23 @@ public class RequestController {
 
     // Update request status
     @PatchMapping("/{id}/status")
-    public ResponseEntity<RequestResponseDTO> updateStatus(
+    public ResponseEntity<?> updateStatus(
             @PathVariable String id,
             @RequestParam Request.Status status,
-            @RequestParam String reviewedBy
+            @RequestParam String reviewedBy,
+            @RequestHeader("Authorization") String authHeader
     ) {
-        return service.updateRequestStatus(id, status, reviewedBy)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            String token = authHeader.substring(7); // remove "Bearer "
+            System.out.println("Token: " + token);
+            return service.updateRequestStatus(id, status, reviewedBy, token)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (StudentNotFoundRemoteException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
+        }
     }
 
     // Delete request
@@ -60,5 +74,19 @@ public class RequestController {
     public ResponseEntity<Void> deleteRequest(@PathVariable String id) {
         service.deleteRequest(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Student creates a hostel join request
+    @PostMapping("/join")
+    public ResponseEntity<?> createJoinRequest(@Valid @RequestBody CreateRequestDTO dto) {
+        if (dto.type() != Request.RequestType.HOSTEL_JOIN) {
+            return ResponseEntity.badRequest().body("Request type must be HOSTEL_JOIN");
+        }
+        try {
+            RequestResponseDTO response = service.createJoinRequest(dto);
+            return ResponseEntity.ok(response);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.hostelhelp.studentservice.controller;
 
+import com.hostelhelp.studentservice.dto.AssignHostelDTO;
 import com.hostelhelp.studentservice.dto.StudentRequestDTO;
 import com.hostelhelp.studentservice.dto.StudentResponseDTO;
 import com.hostelhelp.studentservice.dto.UpdateStudentDTO;
@@ -9,6 +10,7 @@ import com.hostelhelp.studentservice.validation.CreateStudentValidationGroup;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -19,11 +21,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/students")
 @Tag(name = "Student", description = "API for managing Students")
 public class StudentController {
-
     private final StudentService studentService;
 
     public StudentController(StudentService studentService) {
@@ -40,7 +42,7 @@ public class StudentController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a student by ID")
-    @PreAuthorize("hasAnyRole('ADMIN', 'WARDEN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<StudentResponseDTO> getStudent(@PathVariable UUID id) {
         try {
             StudentResponseDTO student = studentService.getStudent(id);
@@ -97,4 +99,23 @@ public class StudentController {
         StudentResponseDTO student = studentService.updateStudentByEmail(email, updateStudentDTO);
         return ResponseEntity.ok().body(student);
     }
+
+    @PostMapping("/{id}/assign-hostel")
+    @Operation(summary = "Assign a hostel to a student")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> assignHostel(@PathVariable UUID id, @RequestBody AssignHostelDTO dto) {
+        try {
+
+            StudentResponseDTO updatedStudent = studentService.assignHostel(id, dto);
+            log.info("Student {} assigned to hostel {}", id, dto.hostelId());
+            return ResponseEntity.ok(updatedStudent);
+        } catch (StudentNotFoundException e) {
+            log.warn("Student not found: {}", id);
+            return ResponseEntity.status(404).body("Student not found with id: " + id);
+        } catch (Exception e) {
+            log.error("Error assigning hostel to student {}: {}", id, e.getMessage());
+            return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
+        }
+    }
+
 }

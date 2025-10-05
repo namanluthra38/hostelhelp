@@ -4,7 +4,15 @@ Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
+POST http://localhost:4004/students/22afce18-8415-41f2-a48a-e819e6111510/assign-hostel
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
 
+{
+    "hostelId" : "11"
+}
+###
 ### Create a new student
 POST http://localhost:4004/students
 Content-Type: application/json
@@ -44,9 +52,10 @@ Accept: application/json
   "roomNumber": 202
 }
 ### Get an student
-GET http://localhost:4004/students/8d3791c8-8269-4f5d-a27e-0f7d27be0497
+GET http://localhost:4004/students/aea9cdc8-3d7b-4c41-9e43-bbd607c9d764
 Content-Type: application/json
 Authorization: Bearer {{token}}
+Accept: application/json
 ###
 
 ### Get all students
