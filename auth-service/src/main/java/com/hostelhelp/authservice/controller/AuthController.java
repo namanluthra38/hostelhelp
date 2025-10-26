@@ -7,6 +7,8 @@ import com.hostelhelp.authservice.model.User;
 import com.hostelhelp.authservice.service.AuthService;
 import com.hostelhelp.authservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +23,7 @@ public class AuthController {
     private final AuthService authService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     @GetMapping("/test")
     public String test() {
@@ -30,6 +33,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(
             @RequestBody LoginRequestDTO loginRequestDTO) {
+        log.info("login request: {}", loginRequestDTO);
         Optional<LoginResponseDTO> responseOptional = authService.authenticate(loginRequestDTO);
         if(responseOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

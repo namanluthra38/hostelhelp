@@ -39,7 +39,7 @@ Authorization: Bearer {{token}}
 DELETE http://localhost:4001/hostels/rooms/00000000-0000-0000-0000-000000000000
 Authorization: Bearer {{token}}
 ### PASS: Allocate Student
-POST http://localhost:4001/hostels/rooms/allocate?hostelId=db4954b0-8337-4b60-a10e-32786d437ce3&studentId=aea9cdc8-3d7b-4c41-9e43-bbd607c9d764
+POST http://localhost:4001/hostels/rooms/allocate?hostelId=db4954b0-8337-4b60-a10e-32786d437ce3&studentId=cf5677a0-0d15-4e74-a38a-d708a5b7f628
 Authorization: Bearer {{token}}
 ### FAIL: Allocate Student (student not found)
 POST http://localhost:4001/hostels/rooms/allocate?hostelId=b1a2c3d4-e5f6-7890-abcd-1234567890ab&studentId=00000000-0000-0000-0000-000000000000

@@ -3,7 +3,7 @@ POST http://localhost:4003/requests/join
 Content-Type: application/json
 
 {
-  "studentId": "aea9cdc8-3d7b-4c41-9e43-bbd607c9d764",
+  "studentId": "72174496-e183-40d3-8967-4d7c5f2cf69c",
   "type": "HOSTEL_JOIN",
   "details": {
     "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"

@@ -51,8 +51,8 @@ public class StudentService {
         Student newStudent = studentRepository.save(
                 StudentMapper.toModel(studentRequestDTO));
         UserDTO userDTO = new UserDTO(newStudent.getEmail(), newStudent.getPassword(), "STUDENT");
-        restTemplate.postForObject("http://api-gateway:4004/auth/register", userDTO, Void.class);
-
+        //restTemplate.postForObject("http://api-gateway:4004/auth/register", userDTO, Void.class);
+        restTemplate.postForObject("http://localhost:4004/auth/register", userDTO, Void.class);
         return StudentMapper.toDTO(newStudent);
     }
 

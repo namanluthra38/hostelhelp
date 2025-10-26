@@ -41,3 +41,4 @@ Authorization: Bearer {{token}}
 ### Delete a hostel
 DELETE http://localhost:4004/hostels/6d77df19-9a89-4776-bfa1-661500d2081b
 Accept: application/json
+

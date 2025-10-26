@@ -3,10 +3,9 @@ POST http://localhost:4003/requests
 Content-Type: application/json
 
 {
-  "studentId": "1234-uuid",
+  "studentId": "72174496-e183-40d3-8967-4d7c5f2cf69c",
   "type": "HOSTEL_JOIN",
   "details": {
-    "roomPreference": "single",
     "hostelBlock": "A"
   }
 }
