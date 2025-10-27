@@ -1,5 +1,7 @@
 package com.hostelhelp.hostelservice.controller;
 
+import com.hostelhelp.hostelservice.dto.RoomResponseDTO;
+import com.hostelhelp.hostelservice.mapper.RoomMapper;
 import com.hostelhelp.hostelservice.model.Room;
 import com.hostelhelp.hostelservice.service.RoomService;
 import lombok.RequiredArgsConstructor;
@@ -9,30 +11,39 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("hostels/rooms")
 @RequiredArgsConstructor
 public class RoomController {
 
     private final RoomService roomService;
+    private final RoomMapper roomMapper;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Room> createRoom(@RequestBody Room room) {
-        return ResponseEntity.ok(roomService.createRoom(room));
+    public ResponseEntity<RoomResponseDTO> createRoom(@RequestBody Room room) {
+        Room createdRoom = roomService.createRoom(room);
+        return ResponseEntity.ok(roomMapper.toResponseDTO(createdRoom));
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('WARDEN','ADMIN')")
-    public ResponseEntity<List<Room>> getAllRooms() {
-        return ResponseEntity.ok(roomService.getAllRooms());
+    // allow public access during development so frontend can fetch room objects by id
+    public ResponseEntity<List<RoomResponseDTO>> getAllRooms() {
+        List<RoomResponseDTO> rooms = roomService.getAllRooms()
+                .stream()
+                .map(roomMapper::toResponseDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(rooms);
     }
 
     @GetMapping("/{roomId}")
-    @PreAuthorize("hasAnyRole('WARDEN','ADMIN')")
-    public ResponseEntity<Room> getRoom(@PathVariable UUID roomId) {
-        return ResponseEntity.ok(roomService.getRoomById(roomId));
+    // allow public access during development
+    public ResponseEntity<RoomResponseDTO> getRoom(@PathVariable UUID roomId) {
+        Room room = roomService.getRoomById(roomId);
+        return ResponseEntity.ok(roomMapper.toResponseDTO(room));
     }
 
     @DeleteMapping("/{roomId}")
@@ -45,15 +56,15 @@ public class RoomController {
     // Allocate student
     @PostMapping("/allocate")
     @PreAuthorize("hasAnyRole('WARDEN','ADMIN')")
-    public ResponseEntity<Room> allocateStudent(
+    public ResponseEntity<RoomResponseDTO> allocateStudent(
             @RequestParam UUID hostelId,
             @RequestParam UUID studentId,
             @RequestHeader("Authorization") String authHeader
     ) {
         try {
             String token = authHeader.substring(7);
-            Room room = roomService.allocateStudent(hostelId, studentId, token);
-            return ResponseEntity.ok(room);
+            Room updatedRoom = roomService.allocateStudent(hostelId, studentId, token);
+            return ResponseEntity.ok(roomMapper.toResponseDTO(updatedRoom));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }

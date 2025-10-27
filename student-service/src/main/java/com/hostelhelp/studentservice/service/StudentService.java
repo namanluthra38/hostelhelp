@@ -11,19 +11,27 @@ import com.hostelhelp.studentservice.mapper.StudentMapper;
 import com.hostelhelp.studentservice.model.Student;
 import com.hostelhelp.studentservice.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StudentService {
     private final StudentRepository studentRepository;
     private final RestTemplate restTemplate;
 
-
+    // small ObjectMapper to parse possible JSON-stringified room objects saved in DB
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
 
 
@@ -114,5 +122,102 @@ public class StudentService {
         student.setHostelId(dto.hostelId());
         studentRepository.save(student);
         return StudentMapper.toDTO(student);
+    }
+
+    // New: Fetch hostel object for a student (returns Map or null)
+    public Map<String, Object> getHostelForStudent(UUID studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with id " + studentId));
+
+        String hostelId = student.getHostelId();
+        if (hostelId == null || hostelId.isBlank()) {
+            return null;
+        }
+
+        String url = "http://localhost:4001/hostels/" + hostelId;
+        try {
+            Map<String, Object> hostel = restTemplate.getForObject(url, Map.class);
+            return hostel;
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                log.info("Hostel not found for id {}", hostelId);
+                return null;
+            }
+            log.error("Error fetching hostel {}: {}", hostelId, e.getMessage());
+            return null;
+        } catch (Exception e) {
+            log.error("Unexpected error fetching hostel {}: {}", hostelId, e.getMessage());
+            return null;
+        }
+    }
+
+    // New: Fetch room object for a student (returns Map or null)
+    public Map<String, Object> getRoomForStudent(UUID studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with id " + studentId));
+
+        Object rawRoom = student.getRoomId();
+        String roomId = null;
+        if (rawRoom == null) {
+            return null;
+        }
+        if (rawRoom instanceof String) {
+            String s = (String) rawRoom;
+            // handle case where DB stored a JSON-stringified object
+            if (s.trim().startsWith("{")) {
+                try {
+                    Map parsed = objectMapper.readValue(s, Map.class);
+                    Object val = parsed.getOrDefault("roomId", parsed.get("id"));
+                    roomId = val == null ? null : String.valueOf(val);
+                } catch (Exception ex) {
+                    log.warn("Failed to parse roomId string for student {}: {}", studentId, ex.getMessage());
+                    roomId = s; // fallback to raw
+                }
+            } else {
+                roomId = s;
+            }
+        } else {
+            // if stored as object, try to extract common fields
+            try {
+                Map asMap = objectMapper.convertValue(rawRoom, Map.class);
+                Object val = asMap.getOrDefault("roomId", asMap.get("id"));
+                roomId = val == null ? null : String.valueOf(val);
+            } catch (Exception ex) {
+                roomId = String.valueOf(rawRoom);
+            }
+        }
+
+        if (roomId == null || roomId.isBlank()) return null;
+
+        // Try two room endpoints: /hostels/rooms/{roomId} and /rooms/{roomId}
+        String url1 = "http://localhost:4001/hostels/rooms/" + roomId;
+        String url2 = "http://localhost:4001/rooms/" + roomId;
+        try {
+            Map<String, Object> room = restTemplate.getForObject(url1, Map.class);
+            return room;
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                // try second endpoint
+                try {
+                    Map<String, Object> room = restTemplate.getForObject(url2, Map.class);
+                    return room;
+                } catch (HttpClientErrorException e2) {
+                    if (e2.getStatusCode() == HttpStatus.NOT_FOUND) {
+                        log.info("Room not found for id {}", roomId);
+                        return null;
+                    }
+                    log.error("Error fetching room {}: {}", roomId, e2.getMessage());
+                    return null;
+                } catch (Exception ex) {
+                    log.error("Unexpected error fetching room {}: {}", roomId, ex.getMessage());
+                    return null;
+                }
+            }
+            log.error("Error fetching room {}: {}", roomId, e.getMessage());
+            return null;
+        } catch (Exception e) {
+            log.error("Unexpected error fetching room {}: {}", roomId, e.getMessage());
+            return null;
+        }
     }
 }

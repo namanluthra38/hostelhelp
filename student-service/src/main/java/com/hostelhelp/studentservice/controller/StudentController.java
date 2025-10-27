@@ -19,10 +19,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/students")
 @Tag(name = "Student", description = "API for managing Students")
 public class StudentController {
@@ -110,5 +112,6 @@ public class StudentController {
         StudentResponseDTO updatedStudent = studentService.assignRoom(studentId, dto);
         return ResponseEntity.ok(updatedStudent);
     }
+
 
 }

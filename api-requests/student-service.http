@@ -59,7 +59,7 @@ Accept: application/json
 ###
 
 ### Get all students
-GET http://localhost:4004/students/me
+GET http://localhost:4000/students/me/full
 Authorization: Bearer {{token}}
 Accept: application/json
 
