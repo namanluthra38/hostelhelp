@@ -1,0 +1,20 @@
+### Create initial pending join request for hostel A (setup)
+POST http://localhost:4003/requests/join
+Content-Type: application/json
+
+{
+  "studentId": "student-1",
+  "type": "HOSTEL_JOIN",
+  "details": { "hostelId": "hostel-A" }
+}
+
+### Create new join request for hostel B for same student (should PASS)
+POST http://localhost:4003/requests/join
+Content-Type: application/json
+
+{
+  "studentId": "student-1",
+  "type": "HOSTEL_JOIN",
+  "details": { "hostelId": "hostel-B" }
+}
+

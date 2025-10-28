@@ -1,0 +1,12 @@
+### Check existence - expected 200 Found (replace studentId/hostelId with real values)
+GET http://localhost:4003/requests/exist?studentId=aea9cdc8-3d7b-4c41-9e43-bbd607c9d764&hostelId=db4954b0-8337-4b60-a10e-32786d437ce3
+Accept: text/plain
+
+### Check not found - expected 404 Not Found
+GET http://localhost:4003/requests/exist?studentId=aea9cdc8-3d7b-4c41-9e43-bbd607c9d764&hostelId=nonexistent-hostel-id
+Accept: text/plain
+
+### Bad request (missing params) - expected 400
+GET http://localhost:4003/requests/exist?studentId=aea9cdc8-3d7b-4c41-9e43-bbd607c9d764
+Accept: text/plain
+

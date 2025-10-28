@@ -16,6 +16,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Slf4j
 @RestController
@@ -52,9 +56,20 @@ public class StudentCompositeController {
                 if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
                 }
-                // In most setups, SecurityContext should be populated; if not, extract identity from token is needed.
-                log.warn("SecurityContextHolder has no authentication; Authorization header present but cannot derive email.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                // Try to extract identity (email/sub) from the JWT as a fallback when SecurityContext isn't populated.
+                try {
+                    String extracted = extractEmailFromAuthorizationHeader(authHeader);
+                    if (extracted != null) {
+                        email = extracted;
+                    }
+                } catch (Exception e) {
+                    log.warn("Failed to extract email from Authorization header: {}", e.getMessage());
+                }
+
+                if (email == null) {
+                    log.warn("SecurityContextHolder has no authentication; Authorization header present but cannot derive email.");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                }
             }
 
             // 2) fetch student locally
@@ -117,5 +132,31 @@ public class StudentCompositeController {
             log.error("Failed to build student composite response", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    // Helper: extract email/sub from a Bearer JWT without validating signature (best-effort fallback)
+    private String extractEmailFromAuthorizationHeader(String authHeader) {
+        if (authHeader == null) return null;
+        if (!authHeader.startsWith("Bearer ")) return null;
+        String token = authHeader.substring(7).trim();
+        if (token.isEmpty()) return null;
+        try {
+            String[] parts = token.split("\\.");
+            if (parts.length < 2) return null;
+            String payload = parts[1];
+            // Base64url decode
+            byte[] decoded = java.util.Base64.getUrlDecoder().decode(payload);
+            String json = new String(decoded, StandardCharsets.UTF_8);
+            ObjectMapper mapper = new ObjectMapper();
+            Map<?, ?> map = mapper.readValue(json, Map.class);
+            // common JWT claim names: "sub", "email", "username"
+            Object v = map.get("email");
+            if (v == null) v = map.get("sub");
+            if (v == null) v = map.get("username");
+            if (v != null) return v.toString();
+        } catch (Exception e) {
+            log.debug("JWT parse failed: {}", e.getMessage());
+        }
+        return null;
     }
 }

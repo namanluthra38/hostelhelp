@@ -2,7 +2,10 @@
 GET http://localhost:4004/students
 Authorization: Bearer {{token}}
 Accept: application/json
-
+###
+GET http://localhost:4000/students/72174496-e183-40d3-8967-4d7c5f2cf69c/name
+Authorization: Bearer {{token}}
+Accept: application/json
 ###
 POST http://localhost:4004/students/22afce18-8415-41f2-a48a-e819e6111510/assign-hostel
 Content-Type: application/json
@@ -19,12 +22,12 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "Naman Sharma",
-  "email": "naman.sharma@example.com",
+  "name": "mohit",
+  "email": "mm@example.com",
   "password": "securePass123",
   "graduationYear": 2026,
-  "uid": "CU12345",
-  "address": "Chandigarh University, Gharuan, Punjab",
+  "uid": "CU455",
+  "address": "Mumbai",
   "dateOfBirth": "2004-08-15",
   "gender": "Male",
   "phone": "+919876543210"

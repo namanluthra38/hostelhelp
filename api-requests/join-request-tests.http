@@ -1,58 +1,61 @@
-### Passing request: valid join request
+### Join request - expected 200 (create new join request)
 POST http://localhost:4003/requests/join
 Content-Type: application/json
 
 {
-  "studentId": "72174496-e183-40d3-8967-4d7c5f2cf69c",
+  "studentId": "aea9cdc8-3d7b-4c41-9e43-bbd607c9d764",
   "type": "HOSTEL_JOIN",
   "details": {
     "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
   }
 }
 
-### Failing request: missing studentId
+### Join request conflict - expected 409 (pending request for same student+hostel)
 POST http://localhost:4003/requests/join
 Content-Type: application/json
 
 {
+  "studentId": "aea9cdc8-3d7b-4c41-9e43-bbd607c9d764",
   "type": "HOSTEL_JOIN",
   "details": {
-    "hostelName": "A-Block",
-    "roomType": "Single"
+    "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
   }
 }
 
-### Failing request: wrong type
+### Join request bad request - expected 400 (missing required fields)
 POST http://localhost:4003/requests/join
 Content-Type: application/json
 
 {
-  "studentId": "student123",
-  "type": "COMPLAINT",
+  "studentId": "",
+  "type": "HOSTEL_JOIN",
+  "details": {}
+}
+
+### Create generic request - expected 200
+POST http://localhost:4003/requests
+Content-Type: application/json
+
+{
+  "studentId": "aea9cdc8-3d7b-4c41-9e43-bbd607c9d764",
+  "type": "HOSTEL_JOIN",
   "details": {
-    "issue": "No water"
+    "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3",
+    "note": "Please allocate"
   }
 }
 
-### Failing request: details is null
-POST http://localhost:4003/requests/join
-Content-Type: application/json
+### Get requests by student - expected 200
+GET http://localhost:4003/requests/student/aea9cdc8-3d7b-4c41-9e43-bbd607c9d764
 
-{
-  "studentId": "student123",
-  "type": "HOSTEL_JOIN",
-  "details": null
-}
+### Get a request by id - replace {id} - expected 200
+GET http://localhost:4003/requests/{id}
 
-### Failing request: duplicate join request (assuming one already exists for student123)
-POST http://localhost:4003/requests/join
-Content-Type: application/json
+### Update request status (approve) - expected 200 (requires Authorization header with Bearer token)
+PATCH http://localhost:4003/requests/{id}/status?status=APPROVED&reviewedBy=warden1
+Authorization: Bearer {token}
 
-{
-  "studentId": "student123",
-  "type": "HOSTEL_JOIN",
-  "details": {
-    "hostelName": "A-Block"
-  }
-}
+
+### Delete request - expected 204
+DELETE http://localhost:4003/requests/{id}
 

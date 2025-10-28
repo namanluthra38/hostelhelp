@@ -10,13 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,13 +35,31 @@ public class RequestService {
     }
 
 
+    // Allow new HOSTEL_JOIN if any existing pending join is for a different hostel
     public RequestResponseDTO createJoinRequest(CreateRequestDTO dto) {
 
-        boolean exists = repository.findByStudentId(dto.studentId())
-                .stream()
-                .anyMatch(r -> r.getType() == Request.RequestType.HOSTEL_JOIN && r.getStatus() == Request.Status.PENDING);
-        if (exists) {
-            throw new IllegalStateException("A pending hostel join request already exists for this student.");
+        Object hostelIdObj = (dto.details() != null) ? dto.details().get("hostelId") : null;
+        String incomingHostelId = (hostelIdObj == null) ? null : String.valueOf(hostelIdObj);
+
+        log.info("Creating join request for student={} hostelId={}", dto.studentId(), incomingHostelId);
+
+        // If no hostel specified in incoming request, block if any pending HOSTEL_JOIN exists
+        if (incomingHostelId == null) {
+            boolean conflict = repository.findByStudentId(dto.studentId())
+                    .stream()
+                    .anyMatch(r -> r.getType() == Request.RequestType.HOSTEL_JOIN && r.getStatus() == Request.Status.PENDING);
+
+            if (conflict) {
+                log.warn("A pending hostel join request already exists for student={} and hostel={}", dto.studentId(), incomingHostelId);
+                throw new IllegalStateException("A pending hostel join request already exists for this student and hostel.");
+            }
+        } else {
+            // Reuse the helper to check whether a pending HOSTEL_JOIN request exists for given student and hostel
+            boolean exists = existsPendingJoinRequestForStudentAndHostel(dto.studentId(), incomingHostelId);
+            if (exists) {
+                log.warn("A pending hostel join request already exists for student={} and hostel={}", dto.studentId(), incomingHostelId);
+                throw new IllegalStateException("A pending hostel join request already exists for this student and hostel.");
+            }
         }
 
         Request request = RequestMapper.toEntity(dto);
@@ -156,5 +172,22 @@ public class RequestService {
         } catch (Exception e) {
             log.error("Error assigning room for student {}: {}", studentId, e.getMessage());
         }
+    }
+
+    // New helper: check whether any pending HOSTEL_JOIN request exists for given studentId and hostelId
+    public boolean existsPendingJoinRequestForStudentAndHostel(String studentId, String hostelId) {
+        if (studentId == null || hostelId == null) {
+            return false;
+        }
+        log.info("Checking existence of PENDING HOSTEL_JOIN request for student={} hostelId={}", studentId, hostelId);
+        return repository.findByStudentId(studentId)
+                .stream()
+                .anyMatch(r -> {
+                    if (r.getType() != Request.RequestType.HOSTEL_JOIN) return false;
+                    if (r.getStatus() != Request.Status.PENDING) return false;
+                    Object existingHostelObj = (r.getDetails() != null) ? r.getDetails().get("hostelId") : null;
+                    String existingHostelId = (existingHostelObj == null) ? null : String.valueOf(existingHostelObj);
+                    return hostelId.equals(existingHostelId);
+                });
     }
 }

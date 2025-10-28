@@ -8,12 +8,10 @@ import com.hostelhelp.requestservice.service.StudentNotFoundRemoteException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("requests")
@@ -86,7 +84,24 @@ public class RequestController {
             RequestResponseDTO response = service.createJoinRequest(dto);
             return ResponseEntity.ok(response);
         } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            // Conflict: pending request for same hostel
+            return ResponseEntity.status(409).body(e.getMessage());
+        }
+    }
+
+    // New endpoint: check existence of a request for a given studentId and hostelId
+    @GetMapping("/exist")
+    public ResponseEntity<String> existsRequest(@RequestParam(required = false) String studentId,
+                                                @RequestParam(required = false) String hostelId) {
+        if (studentId == null || hostelId == null) {
+            return ResponseEntity.badRequest().body("studentId and hostelId query parameters are required");
+        }
+
+        boolean exists = service.existsPendingJoinRequestForStudentAndHostel(studentId, hostelId);
+        if (exists) {
+            return ResponseEntity.ok("Found");
+        } else {
+            return ResponseEntity.status(404).body("Not Found");
         }
     }
 }

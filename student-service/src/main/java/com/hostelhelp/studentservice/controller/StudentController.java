@@ -42,6 +42,8 @@ public class StudentController {
         return ResponseEntity.ok().body(students);
     }
 
+
+
     @GetMapping("/{id}")
     @Operation(summary = "Get a student by ID")
     @PreAuthorize("hasRole('ADMIN')")
@@ -49,6 +51,17 @@ public class StudentController {
         try {
             StudentResponseDTO student = studentService.getStudent(id);
             return ResponseEntity.ok().body(student);
+        } catch (StudentNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{id}/name")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<String> getNameById(@PathVariable UUID id){
+        try {
+            StudentResponseDTO student = studentService.getStudent(id);
+            return ResponseEntity.ok().body(student.name());
         } catch (StudentNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
