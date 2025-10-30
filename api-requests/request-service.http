@@ -6,8 +6,20 @@ Content-Type: application/json
   "studentId": "72174496-e183-40d3-8967-4d7c5f2cf69c",
   "type": "HOSTEL_JOIN",
   "details": {
-    "hostelBlock": "A"
+    "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
   }
+}
+###
+POST http://localhost:4003/requests/leave
+Content-Type: application/json
+
+{
+    "studentId": "18d68a9c-843d-4b5c-81c7-b8653b6fd57f",
+    "type": "HOSTEL_LEAVE",
+    "details": {
+      "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3",
+      "message": "I want to leave hostel"
+    }
 }
 
 ### Get all requests
@@ -20,7 +32,7 @@ GET http://localhost:4003/requests/student/1234-uuid
 GET http://localhost:4003/requests/abcd-uuid
 
 ### Update status (partial update)
-PATCH http://localhost:4003/requests/abcd-uuid/status?status=APPROVED&reviewedBy=warden-uuid
+PATCH http://localhost:4003/requests/6903c059ff7e9139d1e8b67b/status?status=APPROVED&reviewedBy=warden-uuid
 
 ### Full update (replace entire request)
 PUT http://localhost:4003/requests/abcd-uuid

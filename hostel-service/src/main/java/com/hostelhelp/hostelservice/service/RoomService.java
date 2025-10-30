@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -80,5 +81,16 @@ public class RoomService {
             }
         }
         throw new RuntimeException("No vacant rooms in this hostel");
+    }
+
+    public Room removeStudent(UUID studentId, UUID roomId, String token) {
+        try{
+            Room room = getRoomById(roomId);
+            room.getStudentIds().remove(studentId);
+            return roomRepository.save(room);
+        } catch (Exception e) {
+            throw new RuntimeException("Room not found");
+        }
+
     }
 }

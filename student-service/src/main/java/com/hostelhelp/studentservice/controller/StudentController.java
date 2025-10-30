@@ -126,5 +126,20 @@ public class StudentController {
         return ResponseEntity.ok(updatedStudent);
     }
 
+    @PostMapping("/{studentId}/leave")
+    @Operation(summary = "Assign a room to a student")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WARDEN')")
+    public ResponseEntity<StudentResponseDTO> leaveHostel(
+            @PathVariable UUID studentId
+    ) {
+        try{
+            StudentResponseDTO updatedStudent = studentService.leaveHostel(studentId);
+            return ResponseEntity.ok(updatedStudent);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+
 
 }

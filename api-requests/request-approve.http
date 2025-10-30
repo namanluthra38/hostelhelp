@@ -1,5 +1,5 @@
 ### Approve a request
-PATCH http://localhost:4003/requests/6900bce146ef03cce0a30709/status?status=APPROVED&reviewedBy=warden2
+PATCH http://localhost:4003/requests/6903c9c8869a9f85b57394ac/status?status=APPROVED&reviewedBy=warden2
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{token}}

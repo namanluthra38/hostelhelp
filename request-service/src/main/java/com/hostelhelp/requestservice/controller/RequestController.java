@@ -89,6 +89,19 @@ public class RequestController {
         }
     }
 
+    @PostMapping("/leave")
+    public ResponseEntity<?> createLeaveRequest(@Valid @RequestBody CreateRequestDTO dto) {
+        if (dto.type() != Request.RequestType.HOSTEL_LEAVE) {
+            return ResponseEntity.badRequest().body("Request type must be HOSTEL_LEAVE");
+        }
+        try {
+            RequestResponseDTO response = service.createLeaveRequest(dto);
+            return ResponseEntity.ok(response);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409).body(e.getMessage());
+        }
+    }
+
     // New endpoint: check existence of a request for a given studentId and hostelId
     @GetMapping("/exist")
     public ResponseEntity<String> existsRequest(@RequestParam(required = false) String studentId,

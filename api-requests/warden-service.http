@@ -10,25 +10,23 @@ Accept: application/json
 Authorization: Bearer {{token}}
 ###
 
-GET http://localhost:4004/wardens/me
+GET http://localhost:4002/wardens/me
 Accept: application/json
 Authorization: Bearer {{token}}
 ###
 
-### Create a new student
-POST http://localhost:4004/wardens
+### Create a new warden
+POST http://localhost:4002/wardens
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "Ravi",
-  "email": "ravi5@example.com",
+  "name": "Raman",
+  "email": "rj@example.com",
   "password": "securePass123",
   "gender": "Male",
-  "phone": "9876543210",
-  "hostel": "Hostel A",
-  "roomNumber": 181
+  "phone": "9876543210"
 }
 
 ###
@@ -39,9 +37,9 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "John Doe Updated twice",
-  "email": "john.updated@example.com",
-  "password": "newPass456",
+  "name": "Sanjay",
+  "email": "sanjay@example.com",
+  "password": "securePass123",
   "gender": "Male",
   "phone": "9876543210",
   "hostel": "Hostel B",

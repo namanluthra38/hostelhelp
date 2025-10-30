@@ -22,11 +22,11 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "mohit",
-  "email": "mm@example.com",
+  "name": "gautam",
+  "email": "gg@example.com",
   "password": "securePass123",
   "graduationYear": 2026,
-  "uid": "CU455",
+  "uid": "CUgg",
   "address": "Mumbai",
   "dateOfBirth": "2004-08-15",
   "gender": "Male",

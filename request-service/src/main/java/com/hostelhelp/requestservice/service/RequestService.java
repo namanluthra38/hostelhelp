@@ -15,6 +15,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -68,6 +70,42 @@ public class RequestService {
         return RequestMapper.toResponse(request);
     }
 
+    public RequestResponseDTO createLeaveRequest(CreateRequestDTO dto) {
+
+        Object roomIdObj = (dto.details() != null) ? dto.details().get("roomId") : null;
+        String incomingRoomId = (roomIdObj == null) ? null : String.valueOf(roomIdObj);
+
+        log.info("Creating leave request for student={} hostelId={}", dto.studentId(), incomingRoomId);
+
+        if (incomingRoomId == null) {
+            throw new IllegalStateException("No hostel specified in request. Cannot create a leave request.");
+        } else {
+            boolean exists = existsPendingLeaveRequest(dto.studentId());
+            if (exists) {
+                log.warn("A pending hostel leave request already exists for student={}", dto.studentId());
+                throw new IllegalStateException("A pending hostel leave request already exists for this student");
+            }
+        }
+
+        Request request = RequestMapper.toEntity(dto);
+        request.setStatus(Request.Status.PENDING);
+        repository.save(request);
+        return RequestMapper.toResponse(request);
+    }
+
+    private boolean existsPendingLeaveRequest(String studentId) {
+        if (studentId == null) {
+            return false;
+        }
+        log.info("Checking existence of PENDING HOSTEL_JOIN request for student={}", studentId);
+        return repository.findByStudentId(studentId)
+                .stream()
+                .anyMatch(r -> {
+                    if (r.getType() != Request.RequestType.HOSTEL_LEAVE) return false;
+                    else return r.getStatus() == Request.Status.PENDING;
+                });
+    }
+
     public List<RequestResponseDTO> getAllRequests() {
         return repository.findAll()
                 .stream()
@@ -89,6 +127,7 @@ public class RequestService {
     }
 
     // Update request status & reviewedBy
+    @SuppressWarnings("unused")
     public Optional<RequestResponseDTO> updateRequestStatus(String id, Request.Status status, String reviewedBy, String token) {
         return repository.findById(id).map(request -> {
             request.setStatus(status);
@@ -100,12 +139,80 @@ public class RequestService {
                     assignHostelIfApproved(request, token);
                     log.info("Hostel assigned successfully to student: {} for request {}", request.getStudentId(), id);
                 }
+                if (request.getType() == Request.RequestType.HOSTEL_LEAVE && request.getStatus() == Request.Status.APPROVED) {
+                    log.info("Trying to leave hostel for student: {} for request {}", request.getStudentId(), id);
+                    leaveHostelIfApproved(request, token);
+                    log.info("Hostel left successfully for student: {} for request {}", request.getStudentId(), id);
+                }
             } catch (Exception e) {
-                log.error("Student not found in student-service during hostel assignment for request {}: {}", id, e.getMessage());
+                log.error(e.getMessage());
                 throw e;
             }
             return RequestMapper.toResponse(request);
         });
+    }
+
+    @SuppressWarnings("unused")
+    private void leaveHostelIfApproved(Request request, String token) {
+
+
+        String studentId = request.getStudentId();
+        if (studentId == null) {
+            log.warn("Cannot process leave: missing studentId for request {}", request.getId());
+            return;
+        }
+
+
+        // Prefer roomId provided in the request details (if available)
+        String roomId = null;
+        if (request.getDetails() != null && request.getDetails().get("roomId") != null) {
+            roomId = String.valueOf(request.getDetails().get("roomId"));
+        } else {
+            try {
+                log.debug("Attempting to fetch student to determine roomId for student {}", studentId);
+                HttpHeaders headers = new HttpHeaders();
+                headers.setBearerAuth(token);
+                HttpEntity<Void> entity = new HttpEntity<>(headers);
+                Map studentObj = restTemplate.exchange("http://localhost:4000/students/" + studentId, HttpMethod.GET, entity, Map.class).getBody();
+                if (studentObj != null && studentObj.get("roomId") != null) {
+                    roomId = String.valueOf(studentObj.get("roomId"));
+                }
+            } catch (Exception e) {
+                // Simplified handling: log and continue. If we couldn't fetch student, we'll still try to call leave.
+                log.warn("Could not fetch student {} to determine roomId: {}. Proceeding to process leave anyway.", studentId, e.getMessage());
+            }
+        }
+
+        // If we have a roomId, attempt to remove the student from that room. If that call fails, log and continue.
+        if (roomId != null) {
+            try {
+                log.info("Removing student {} from room {}", studentId, roomId);
+                HttpHeaders headers = new HttpHeaders();
+                headers.setBearerAuth(token);
+                HttpEntity<Void> entity = new HttpEntity<>(headers);
+                String removeUrl = "http://localhost:4001/hostels/rooms/remove-student?studentId=" + studentId + "&roomId=" + roomId;
+                restTemplate.exchange(removeUrl, HttpMethod.POST, entity, Object.class);
+                log.info("Removed student {} from room {} successfully", studentId, roomId);
+            } catch (Exception e) {
+                // Don't fail the entire leave flow if removing from room fails; just log.
+                log.warn("Failed to remove student {} from room {}: {}", studentId, roomId, e.getMessage());
+            }
+        } else {
+            log.debug("No roomId available for student {}. Skipping room removal.", studentId);
+        }
+
+        // Finally, call student-service leave endpoint to update student record. Let errors surface as runtime exceptions.
+        try {
+            log.info("Calling student-service leave endpoint for student {}", studentId);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(token);
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
+            restTemplate.exchange("http://localhost:4000/students/" + studentId + "/leave", HttpMethod.POST, entity, Object.class);
+            log.info("Student {} leave processed in student-service", studentId);
+        } catch (Exception e) {
+            log.error("Failed to process leave for student {}: {}", studentId, e.getMessage());
+            throw new RuntimeException("Failed to process leave for student " + studentId + ": " + e.getMessage(), e);
+        }
     }
 
     // Delete a request
@@ -123,41 +230,12 @@ public class RequestService {
             return;
         }
 
-        log.info("Fetching student with id: {}", studentId);
-        String getUrl = "http://localhost:4000/students/" + studentId;
-        try {
-            log.info("Checking if student exists: {}", studentId);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(token);
-            HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-            restTemplate.exchange(getUrl, HttpMethod.GET, entity, Object.class);
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode().value() == 404) {
-                log.error("Student not found in student-service: {}", studentId);
-                throw new StudentNotFoundRemoteException("Student not found: " + studentId);
-            } else if (e.getStatusCode().value() == 403) {
-                log.error("Forbidden when fetching student {}: {}", studentId, e.getMessage());
-                throw new RuntimeException("Forbidden call to student-service. Check permissions.");
-            } else if (e.getStatusCode().value() == 401) {
-                log.error("Unauthorized when fetching student {}: {}", studentId, e.getMessage());
-                throw new RuntimeException("Unauthorized call to student-service. Check security config.");
-            } else {
-                log.error("Error fetching student {}: {}", studentId, e.getMessage());
-                throw new RuntimeException("Failed to fetch student before assigning hostel: " + e.getMessage());
-            }
-        } catch (Exception e) {
-            log.error("Error fetching student {}: {}", studentId, e.getMessage());
-            throw new RuntimeException("Failed to fetch student before assigning hostel: " + e.getMessage());
-        }
-
-        log.info("assigning hostel with id: {}", hostelId);
+        log.info("assigning hostel with id: {} to student {}", hostelId, studentId);
         String roomAssignUrl = "http://localhost:4001/hostels/rooms/allocate?hostelId=" + hostelId + "&studentId=" + studentId;
         try {
-            log.info("Assigning room in hostel {} to student {} via RoomController", hostelId, studentId);
+            log.info("Calling room allocation endpoint for hostel {} student {}", hostelId, studentId);
             HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(token);
+            if (token != null && !token.isBlank()) headers.setBearerAuth(token);
             HttpEntity<Void> entity = new HttpEntity<>(headers);
             restTemplate.exchange(roomAssignUrl, HttpMethod.POST, entity, Void.class);
             log.info("Room assigned successfully in hostel {} to student {}", hostelId, studentId);
@@ -166,11 +244,13 @@ public class RequestService {
                 log.error("Room assignment failed: student or hostel not found for student {} in hostel {}", studentId, hostelId);
             } else if (e.getStatusCode().value() == 403) {
                 log.error("Forbidden when assigning room for student {}: {}", studentId, e.getMessage());
+                throw new RuntimeException("Forbidden call to room-service. Check permissions.");
             } else {
                 log.error("Unexpected error assigning room for student {}: {}", studentId, e.getMessage());
             }
         } catch (Exception e) {
             log.error("Error assigning room for student {}: {}", studentId, e.getMessage());
+            throw new RuntimeException("Failed to assign room: " + e.getMessage());
         }
     }
 
@@ -190,4 +270,6 @@ public class RequestService {
                     return hostelId.equals(existingHostelId);
                 });
     }
+
+
 }

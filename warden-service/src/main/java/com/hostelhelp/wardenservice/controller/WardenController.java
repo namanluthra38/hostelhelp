@@ -74,7 +74,7 @@ public class WardenController {
     @GetMapping("/me")
     @Operation(summary = "Get current student's profile")
     @PreAuthorize("hasRole('WARDEN')")
-    public ResponseEntity<WardenResponseDTO> getCurrentStudentProfile() {
+    public ResponseEntity<WardenResponseDTO> getCurrentWardenProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         WardenResponseDTO student = wardenService.getWardenByEmail(email);

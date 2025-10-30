@@ -220,4 +220,13 @@ public class StudentService {
             return null;
         }
     }
+
+    public StudentResponseDTO leaveHostel(UUID studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with id " + studentId));
+        student.setRoomId(null);
+        student.setHostelId(null);
+        studentRepository.save(student);
+        return StudentMapper.toDTO(student);
+    }
 }

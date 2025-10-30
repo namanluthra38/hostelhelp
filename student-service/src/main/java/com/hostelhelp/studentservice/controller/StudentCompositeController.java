@@ -6,6 +6,8 @@ import com.hostelhelp.studentservice.dto.StudentCompositeDTO;
 import com.hostelhelp.studentservice.dto.StudentResponseDTO;
 import com.hostelhelp.studentservice.exception.StudentNotFoundException;
 import com.hostelhelp.studentservice.service.StudentService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,11 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Map;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Slf4j
 @RestController
@@ -29,6 +29,7 @@ public class StudentCompositeController {
 
     private final StudentService studentService;
     private final RestTemplateBuilder restTemplateBuilder;
+    private final ObjectMapper objectMapper; // injected
 
     @Value("${services.hostel.base-url:http://localhost:4001}")
     private String hostelServiceBaseUrl;
@@ -51,12 +52,12 @@ public class StudentCompositeController {
                 log.debug("Unable to read SecurityContextHolder authentication", e);
             }
 
+            // 1b) fallback: extract from Authorization header if SecurityContext not populated
             if (email == null) {
                 String authHeader = request.getHeader("Authorization");
                 if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
                 }
-                // Try to extract identity (email/sub) from the JWT as a fallback when SecurityContext isn't populated.
                 try {
                     String extracted = extractEmailFromAuthorizationHeader(authHeader);
                     if (extracted != null) {
@@ -76,7 +77,12 @@ public class StudentCompositeController {
             StudentResponseDTO student = studentService.getStudentByEmail(email);
 
             // Prepare RestTemplate and headers (forward Authorization)
-            RestTemplate restTemplate = restTemplateBuilder.build();
+            RestTemplate restTemplate = restTemplateBuilder
+                    // optional: set reasonable timeouts
+                    .setConnectTimeout(Duration.ofSeconds(3))
+                    .setReadTimeout(Duration.ofSeconds(5))
+                    .build();
+
             HttpHeaders headers = new HttpHeaders();
             String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
             if (authHeader != null) {
@@ -134,7 +140,14 @@ public class StudentCompositeController {
         }
     }
 
-    // Helper: extract email/sub from a Bearer JWT without validating signature (best-effort fallback)
+    /**
+     * Helper: extract email/sub from a Bearer JWT without validating signature (best-effort fallback).
+     *
+     * SECURITY NOTE:
+     * - This method decodes the JWT payload without validating the signature.
+     * - It's acceptable as a convenience/fallback in local/dev environments, but it MUST NOT be relied on for auth in production.
+     * - In production, ensure SecurityContext is populated by your auth filter or validate the token properly here.
+     */
     private String extractEmailFromAuthorizationHeader(String authHeader) {
         if (authHeader == null) return null;
         if (!authHeader.startsWith("Bearer ")) return null;
@@ -147,9 +160,9 @@ public class StudentCompositeController {
             // Base64url decode
             byte[] decoded = java.util.Base64.getUrlDecoder().decode(payload);
             String json = new String(decoded, StandardCharsets.UTF_8);
-            ObjectMapper mapper = new ObjectMapper();
-            Map<?, ?> map = mapper.readValue(json, Map.class);
-            // common JWT claim names: "sub", "email", "username"
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = objectMapper.readValue(json, Map.class);
+            // common JWT claim names: "email", "sub", "username"
             Object v = map.get("email");
             if (v == null) v = map.get("sub");
             if (v == null) v = map.get("username");

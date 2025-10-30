@@ -59,14 +59,23 @@ public class RoomController {
     public ResponseEntity<RoomResponseDTO> allocateStudent(
             @RequestParam UUID hostelId,
             @RequestParam UUID studentId,
-            @RequestHeader("Authorization") String authHeader
+            @RequestHeader(value = "Authorization", required = false) String authHeader
     ) {
-        try {
-            String token = authHeader.substring(7);
-            Room updatedRoom = roomService.allocateStudent(hostelId, studentId, token);
-            return ResponseEntity.ok(roomMapper.toResponseDTO(updatedRoom));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        // Safely extract token (if present). Do not throw locally; let service throw if required.
+        String token = (authHeader != null && authHeader.startsWith("Bearer ")) ? authHeader.substring(7) : null;
+        Room updatedRoom = roomService.allocateStudent(hostelId, studentId, token);
+        return ResponseEntity.ok(roomMapper.toResponseDTO(updatedRoom));
+    }
+
+    @PostMapping("/remove-student")
+    @PreAuthorize("hasAnyRole('WARDEN','ADMIN')")
+    public ResponseEntity<RoomResponseDTO> removeStudent(
+            @RequestParam UUID studentId,
+            @RequestParam UUID roomId,
+            @RequestHeader(value = "Authorization", required = false) String authHeader
+    ) {
+        String token = (authHeader != null && authHeader.startsWith("Bearer ")) ? authHeader.substring(7) : null;
+        Room updatedRoom = roomService.removeStudent(studentId, roomId, token);
+        return ResponseEntity.ok(roomMapper.toResponseDTO(updatedRoom));
     }
 }

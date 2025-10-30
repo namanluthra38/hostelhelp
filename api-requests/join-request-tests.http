@@ -11,14 +11,14 @@ Content-Type: application/json
 }
 
 ### Join request conflict - expected 409 (pending request for same student+hostel)
-POST http://localhost:4003/requests/join
+POST http://localhost:4003/requests/leave
 Content-Type: application/json
 
 {
-  "studentId": "aea9cdc8-3d7b-4c41-9e43-bbd607c9d764",
-  "type": "HOSTEL_JOIN",
+  "studentId": "21a489b6-cc96-493a-9d3a-af3258234053",
+  "type": "HOSTEL_LEAVE",
   "details": {
-    "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
+    "roomId": "8d037453-5c90-44bc-9495-9b74077fb931"
   }
 }
 
