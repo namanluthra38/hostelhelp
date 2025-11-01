@@ -16,7 +16,6 @@ public class WardenMapper {
                 .gender(dto.gender())
                 .phone(dto.phone())
                 .hostelId(dto.hostelId())
-                .roomNumber(dto.roomNumber())
                 .build();
     }
 
@@ -28,7 +27,6 @@ public class WardenMapper {
                 warden.getGender(),
                 warden.getPhone(),
                 warden.getHostelId(),
-                warden.getRoomNumber(),
                 warden.getCreatedAt(),
                 warden.getUpdatedAt()
         );

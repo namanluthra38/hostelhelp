@@ -57,7 +57,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}/name")
-    @PreAuthorize("hasRole('STUDENT')")
+    @PreAuthorize("hasAnyRole('STUDENT','WARDEN','ADMIN')")
     public ResponseEntity<String> getNameById(@PathVariable UUID id){
         try {
             StudentResponseDTO student = studentService.getStudent(id);

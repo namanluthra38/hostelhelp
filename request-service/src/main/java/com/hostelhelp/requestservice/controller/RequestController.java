@@ -38,6 +38,11 @@ public class RequestController {
         return ResponseEntity.ok(service.getRequestsByStudent(studentId));
     }
 
+    @GetMapping("/hostel/{hostelId}")
+    public ResponseEntity<List<RequestResponseDTO>> getRequestsByHostel(@PathVariable String hostelId) {
+        return ResponseEntity.ok(service.getRequestsByHostel(hostelId));
+    }
+
     // Get request by id
     @GetMapping("/{id}")
     public ResponseEntity<RequestResponseDTO> getRequestById(@PathVariable String id) {

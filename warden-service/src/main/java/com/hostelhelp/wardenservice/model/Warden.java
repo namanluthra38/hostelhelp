@@ -36,7 +36,6 @@ public class Warden {
     private String phone;
 
     private String hostelId;
-    private Integer roomNumber;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

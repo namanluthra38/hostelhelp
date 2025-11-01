@@ -10,7 +10,6 @@ public record WardenResponseDTO(
         String gender,
         String phone,
         String hostelId,
-        Integer roomNumber,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {}

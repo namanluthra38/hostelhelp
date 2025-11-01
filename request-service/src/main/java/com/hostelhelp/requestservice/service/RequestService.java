@@ -272,4 +272,12 @@ public class RequestService {
     }
 
 
+    public List<RequestResponseDTO> getRequestsByHostel(String hostelId) {
+        return repository.findAll()
+                .stream()
+                .filter(request -> request.getDetails().containsKey("hostelId") && request.getDetails().get("hostelId").equals(hostelId))
+                .map(RequestMapper::toResponse)
+                .collect(Collectors.toList());
+
+    }
 }

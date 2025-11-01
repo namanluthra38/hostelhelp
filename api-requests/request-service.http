@@ -1,9 +1,9 @@
 ### Create a new request
-POST http://localhost:4003/requests
+POST http://localhost:4003/requests/join
 Content-Type: application/json
 
 {
-  "studentId": "72174496-e183-40d3-8967-4d7c5f2cf69c",
+  "studentId": "21a489b6-cc96-493a-9d3a-af3258234053",
   "type": "HOSTEL_JOIN",
   "details": {
     "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
@@ -29,7 +29,10 @@ GET http://localhost:4003/requests
 GET http://localhost:4003/requests/student/1234-uuid
 
 ### Get request by id
-GET http://localhost:4003/requests/abcd-uuid
+GET http://localhost:4003/requests/6905d655eb11a01b63542ef1
+
+###
+GET http://localhost:4003/requests/hostel/db4954b0-8337-4b60-a10e-32786d437ce3
 
 ### Update status (partial update)
 PATCH http://localhost:4003/requests/6903c059ff7e9139d1e8b67b/status?status=APPROVED&reviewedBy=warden-uuid
