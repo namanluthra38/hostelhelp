@@ -35,7 +35,7 @@ public class Warden {
     @Column(nullable = false)
     private String phone;
 
-    private String hostel;
+    private String hostelId;
     private Integer roomNumber;
 
     private LocalDateTime createdAt;

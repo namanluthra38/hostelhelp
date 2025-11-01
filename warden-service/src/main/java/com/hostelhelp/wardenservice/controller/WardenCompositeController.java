@@ -1,11 +1,11 @@
-package com.hostelhelp.studentservice.controller;
+package com.hostelhelp.wardenservice.controller;
 
-import com.hostelhelp.studentservice.dto.HostelResponseDTO;
-import com.hostelhelp.studentservice.dto.RoomResponseDTO;
-import com.hostelhelp.studentservice.dto.StudentCompositeDTO;
-import com.hostelhelp.studentservice.dto.StudentResponseDTO;
-import com.hostelhelp.studentservice.exception.StudentNotFoundException;
-import com.hostelhelp.studentservice.service.StudentService;
+
+import com.hostelhelp.wardenservice.dto.HostelResponseDTO;
+import com.hostelhelp.wardenservice.dto.WardenCompositeDTO;
+import com.hostelhelp.wardenservice.dto.WardenResponseDTO;
+import com.hostelhelp.wardenservice.exception.WardenNotFoundException;
+import com.hostelhelp.wardenservice.service.WardenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +24,11 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/students")
+@RequestMapping("/wardens")
 @RequiredArgsConstructor
-public class StudentCompositeController {
+public class WardenCompositeController {
 
-    private final StudentService studentService;
+    private final WardenService wardenService;
     private final RestTemplateBuilder restTemplateBuilder;
     private final ObjectMapper objectMapper; // injected
 
@@ -36,11 +36,11 @@ public class StudentCompositeController {
     private String hostelServiceBaseUrl;
 
     /**
-     * GET /students/me/full
-     * Returns StudentCompositeDTO { student, room, hostel }
+     * GET /wardens/me/full
+     * Returns WardenCompositeDTO { warden, room, hostel }
      */
     @GetMapping("/me/full")
-    public ResponseEntity<StudentCompositeDTO> getStudentWithRoomAndHostel(HttpServletRequest request) {
+    public ResponseEntity<WardenCompositeDTO> getWardenWithHostel(HttpServletRequest request) {
         try {
             // 1) get email from SecurityContext (preferred)
             String email = null;
@@ -74,8 +74,8 @@ public class StudentCompositeController {
                 }
             }
 
-            // 2) fetch student locally
-            StudentResponseDTO student = studentService.getStudentByEmail(email);
+            // 2) fetch warden locally
+            WardenResponseDTO warden = wardenService.getWardenByEmail(email);
 
             // Prepare RestTemplate and headers (forward Authorization)
             RestTemplate restTemplate = restTemplateBuilder
@@ -95,32 +95,13 @@ public class StudentCompositeController {
             headers.setAccept(java.util.List.of(MediaType.APPLICATION_JSON));
             HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-            RoomResponseDTO roomDto = null;
             HostelResponseDTO hostelDto = null;
 
-            // 3) fetch room if student has roomId
-            try {
-                if (student.roomId() != null) {
-                    String roomUrl = String.format("%s/hostels/rooms/%s", hostelServiceBaseUrl, student.roomId());
-                    ResponseEntity<RoomResponseDTO> roomResp = restTemplate.exchange(roomUrl, HttpMethod.GET, entity, RoomResponseDTO.class);
-                    roomDto = roomResp.getBody();
-                }
-            } catch (HttpClientErrorException.NotFound nfe) {
-                log.debug("Room not found for id {}: {}", student.roomId(), nfe.getMessage());
-                roomDto = null;
-            } catch (Exception ex) {
-                log.error("Error fetching room for student {}: {}", student.id(), ex.getMessage());
-                roomDto = null;
-            }
 
-            // 4) fetch hostel: prefer student.hostelId, else try nested hostelId from room
+
             try {
-                if (student.hostelId() != null) {
-                    String hostelUrl = String.format("%s/hostels/%s", hostelServiceBaseUrl, student.hostelId());
-                    ResponseEntity<HostelResponseDTO> hostelResp = restTemplate.exchange(hostelUrl, HttpMethod.GET, entity, HostelResponseDTO.class);
-                    hostelDto = hostelResp.getBody();
-                } else if (roomDto != null && roomDto.hostelId() != null) {
-                    String hostelUrl = String.format("%s/hostels/%s", hostelServiceBaseUrl, roomDto.hostelId());
+                if (warden.hostelId() != null) {
+                    String hostelUrl = String.format("%s/hostels/%s", hostelServiceBaseUrl, warden.hostelId());
                     ResponseEntity<HostelResponseDTO> hostelResp = restTemplate.exchange(hostelUrl, HttpMethod.GET, entity, HostelResponseDTO.class);
                     hostelDto = hostelResp.getBody();
                 }
@@ -128,30 +109,22 @@ public class StudentCompositeController {
                 log.debug("Hostel not found: {}", nfe.getMessage());
                 hostelDto = null;
             } catch (Exception ex) {
-                log.error("Error fetching hostel for student {}: {}", student.id(), ex.getMessage());
+                log.error("Error fetching hostel for warden {}: {}", warden.id(), ex.getMessage());
                 hostelDto = null;
             }
 
-            StudentCompositeDTO composite = new StudentCompositeDTO(student, roomDto, hostelDto);
+            WardenCompositeDTO composite = new WardenCompositeDTO(warden, hostelDto);
             return ResponseEntity.ok(composite);
 
-        } catch (StudentNotFoundException snf) {
-            log.warn("Student not found for current principal", snf);
+        } catch (WardenNotFoundException snf) {
+            log.warn("Warden not found for current principal", snf);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
-            log.error("Failed to build student composite response", e);
+            log.error("Failed to build warden composite response", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    /**
-     * Helper: extract email/sub from a Bearer JWT without validating signature (best-effort fallback).
-     *
-     * SECURITY NOTE:
-     * - This method decodes the JWT payload without validating the signature.
-     * - It's acceptable as a convenience/fallback in local/dev environments, but it MUST NOT be relied on for auth in production.
-     * - In production, ensure SecurityContext is populated by your auth filter or validate the token properly here.
-     */
     private String extractEmailFromAuthorizationHeader(String authHeader) {
         if (authHeader == null) return null;
         if (!authHeader.startsWith("Bearer ")) return null;

@@ -14,10 +14,10 @@ POST http://localhost:4003/requests/leave
 Content-Type: application/json
 
 {
-    "studentId": "18d68a9c-843d-4b5c-81c7-b8653b6fd57f",
+    "studentId": "21a489b6-cc96-493a-9d3a-af3258234053",
     "type": "HOSTEL_LEAVE",
     "details": {
-      "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3",
+      "roomId": "3240a8b8-9f6c-4c60-ab57-fb96f15f3c1f",
       "message": "I want to leave hostel"
     }
 }

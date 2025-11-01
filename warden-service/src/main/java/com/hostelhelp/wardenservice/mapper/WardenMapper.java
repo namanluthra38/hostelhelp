@@ -15,7 +15,7 @@ public class WardenMapper {
                 .password(passwordEncoder.encode(dto.password()))
                 .gender(dto.gender())
                 .phone(dto.phone())
-                .hostel(dto.hostel())
+                .hostelId(dto.hostelId())
                 .roomNumber(dto.roomNumber())
                 .build();
     }
@@ -27,7 +27,7 @@ public class WardenMapper {
                 warden.getEmail(),
                 warden.getGender(),
                 warden.getPhone(),
-                warden.getHostel(),
+                warden.getHostelId(),
                 warden.getRoomNumber(),
                 warden.getCreatedAt(),
                 warden.getUpdatedAt()

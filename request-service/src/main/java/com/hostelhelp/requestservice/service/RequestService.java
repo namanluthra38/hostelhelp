@@ -93,7 +93,7 @@ public class RequestService {
         return RequestMapper.toResponse(request);
     }
 
-    private boolean existsPendingLeaveRequest(String studentId) {
+    public boolean existsPendingLeaveRequest(String studentId) {
         if (studentId == null) {
             return false;
         }

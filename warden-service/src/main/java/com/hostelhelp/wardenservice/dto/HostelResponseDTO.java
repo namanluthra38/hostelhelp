@@ -3,14 +3,13 @@ package com.hostelhelp.wardenservice.dto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record WardenResponseDTO(
+public record HostelResponseDTO(
         UUID id,
         String name,
-        String email,
-        String gender,
-        String phone,
-        String hostelId,
-        Integer roomNumber,
+        boolean hasAC,
+        int numberOfRooms,
+        double chargesPerSemester,
+        boolean isBoysHostel,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {}

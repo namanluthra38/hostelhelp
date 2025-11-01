@@ -21,6 +21,6 @@ public record WardenRequestDTO(
         @NotBlank(message = "Phone is required")
         String phone,
 
-        String hostel,
+        String hostelId,
         Integer roomNumber
 ) {}

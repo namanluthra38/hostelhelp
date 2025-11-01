@@ -22,11 +22,12 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "Raman",
-  "email": "rj@example.com",
+  "name": "Nolan",
+  "email": "nl@example.com",
   "password": "securePass123",
   "gender": "Male",
-  "phone": "9876543210"
+  "phone": "9876543210",
+  "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
 }
 
 ###
@@ -50,5 +51,10 @@ Accept: application/json
 
 ### Delete a student
 DELETE http://localhost:4004/wardens/f7a1352a-a7b4-475b-a1ae-9e24154ec4eb
+Accept: application/json
+Authorization: Bearer {{token}}
+###
+
+GET http://localhost:4002/wardens/me/full
 Accept: application/json
 Authorization: Bearer {{token}}

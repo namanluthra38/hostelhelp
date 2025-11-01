@@ -104,13 +104,27 @@ public class RequestController {
 
     // New endpoint: check existence of a request for a given studentId and hostelId
     @GetMapping("/exist")
-    public ResponseEntity<String> existsRequest(@RequestParam(required = false) String studentId,
+    public ResponseEntity<String> existsJoinRequest(@RequestParam(required = false) String studentId,
                                                 @RequestParam(required = false) String hostelId) {
         if (studentId == null || hostelId == null) {
             return ResponseEntity.badRequest().body("studentId and hostelId query parameters are required");
         }
 
         boolean exists = service.existsPendingJoinRequestForStudentAndHostel(studentId, hostelId);
+        if (exists) {
+            return ResponseEntity.ok("Found");
+        } else {
+            return ResponseEntity.status(404).body("Not Found");
+        }
+    }
+
+    @GetMapping("/exist-leave")
+    public ResponseEntity<String> existsLeaveRequest(@RequestParam(required = false) String studentId) {
+        if (studentId == null) {
+            return ResponseEntity.badRequest().body("studentId and hostelId query parameters are required");
+        }
+
+        boolean exists = service.existsPendingLeaveRequest(studentId);
         if (exists) {
             return ResponseEntity.ok("Found");
         } else {

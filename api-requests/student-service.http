@@ -55,7 +55,7 @@ Accept: application/json
   "roomNumber": 202
 }
 ### Get an student
-GET http://localhost:4000/students/aea9cdc8-3d7b-4c41-9e43-bbd607c9d764
+GET http://localhost:4000/students/21a489b6-cc96-493a-9d3a-af3258234053
 Content-Type: application/json
 Authorization: Bearer {{token}}
 Accept: application/json
