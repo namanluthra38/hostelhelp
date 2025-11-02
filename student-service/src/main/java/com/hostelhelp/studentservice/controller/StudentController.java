@@ -1,6 +1,7 @@
 package com.hostelhelp.studentservice.controller;
 
 import com.hostelhelp.studentservice.dto.AssignRoomDTO;
+import com.hostelhelp.studentservice.dto.StudentMinDetailsDTO;
 import com.hostelhelp.studentservice.dto.StudentRequestDTO;
 import com.hostelhelp.studentservice.dto.StudentResponseDTO;
 import com.hostelhelp.studentservice.dto.UpdateStudentDTO;
@@ -19,7 +20,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -46,7 +46,7 @@ public class StudentController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a student by ID")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','WARDEN')")
     public ResponseEntity<StudentResponseDTO> getStudent(@PathVariable UUID id) {
         try {
             StudentResponseDTO student = studentService.getStudent(id);
@@ -60,8 +60,20 @@ public class StudentController {
     @PreAuthorize("hasAnyRole('STUDENT','WARDEN','ADMIN')")
     public ResponseEntity<String> getNameById(@PathVariable UUID id){
         try {
-            StudentResponseDTO student = studentService.getStudent(id);
-            return ResponseEntity.ok().body(student.name());
+            var dto = studentService.getStudentMinDetails(id);
+            if (dto == null) return ResponseEntity.notFound().build();
+            return ResponseEntity.ok().body(dto.name());
+        } catch (StudentNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{id}/min")
+    @PreAuthorize("hasAnyRole('STUDENT','WARDEN','ADMIN')")
+    public ResponseEntity<StudentMinDetailsDTO> getMinDetailsById(@PathVariable UUID id) {
+        try {
+            StudentMinDetailsDTO dto = studentService.getStudentMinDetails(id);
+            return ResponseEntity.ok(dto);
         } catch (StudentNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
@@ -146,6 +158,14 @@ public class StudentController {
             return ResponseEntity.badRequest().build();
         }
 
+    }
+
+    @GetMapping("/hostel/{hostelId}")
+    @Operation(summary = "Get students by hostel id")
+    @PreAuthorize("hasAnyRole('WARDEN','ADMIN')")
+    public ResponseEntity<List<StudentResponseDTO>> getStudentsByHostel(@PathVariable UUID hostelId) {
+        List<StudentResponseDTO> students = studentService.getStudentsByHostelId(hostelId);
+        return ResponseEntity.ok().body(students);
     }
 
 

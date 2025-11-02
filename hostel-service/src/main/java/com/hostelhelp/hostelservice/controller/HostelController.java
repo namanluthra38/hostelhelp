@@ -48,6 +48,17 @@ public class HostelController {
         }
     }
 
+    @GetMapping("/{id}/is-boys")
+    @Operation(summary = "Return whether the hostel is a boys hostel")
+    public ResponseEntity<Boolean> isBoysHostel(@PathVariable UUID id) {
+        try {
+            HostelResponseDTO dto = hostelService.getHostel(id);
+            return ResponseEntity.ok(dto.isBoysHostel());
+        } catch (HostelNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping
     @Operation(summary = "Create a new hostel")
     @PreAuthorize("hasRole('ADMIN')")

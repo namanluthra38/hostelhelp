@@ -42,6 +42,11 @@ public class RoomService {
         return roomRepository.findAll();
     }
 
+    // New: fetch all rooms for a given hostelId
+    public List<Room> getRoomsByHostelId(UUID hostelId) {
+        return roomRepository.findByHostelId(hostelId);
+    }
+
     public Room getRoomById(UUID roomId) {
         return roomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Room not found"));

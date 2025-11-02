@@ -1,6 +1,7 @@
 package com.hostelhelp.studentservice.service;
 
 import com.hostelhelp.studentservice.dto.AssignRoomDTO;
+import com.hostelhelp.studentservice.dto.StudentMinDetailsDTO;
 import com.hostelhelp.studentservice.dto.StudentRequestDTO;
 import com.hostelhelp.studentservice.dto.StudentResponseDTO;
 import com.hostelhelp.studentservice.dto.UpdateStudentDTO;
@@ -18,6 +19,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;
 import java.util.Map;
@@ -92,8 +94,7 @@ public class StudentService {
             String deleteUrl = "http://api-gateway:4004/auth/user/" + email;
             restTemplate.delete(deleteUrl);
         } catch (Exception e) {
-            System.err.println("Failed to delete user in auth-service for email: " + email);
-            e.printStackTrace();
+            log.error("Failed to delete user in auth-service for email: {}", email, e);
         }
     }
 
@@ -119,12 +120,48 @@ public class StudentService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found with id " + studentId));
         if(student.getHostelId() != null) throw new IllegalArgumentException("Already hostel assigned");
+
+        // Verify gender compatibility using hostel-service boolean endpoint
+        Boolean isBoysHostel = null;
+        try {
+            String hostelUrl = "http://localhost:4001/hostels/" + dto.hostelId() + "/is-boys";
+            isBoysHostel = restTemplate.getForObject(hostelUrl, Boolean.class);
+        } catch (HttpClientErrorException e) {
+            // If hostel not found or other client error, rethrow as IllegalArgumentException for caller
+            if (e.getStatusCode().value() == 404) {
+                throw new IllegalArgumentException("Hostel not found: " + dto.hostelId());
+            }
+            throw new IllegalArgumentException("Failed to verify hostel type: " + e.getMessage());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to verify hostel type: " + e.getMessage());
+        }
+
+        // if we could determine hostel type, enforce gender rules
+        if (isBoysHostel != null) {
+            String gender = student.getGender();
+            if (gender != null) {
+                String g = gender.trim().toLowerCase();
+                if ((g.equals("male") || g.equals("m")) && !isBoysHostel) {
+                    throw new IllegalArgumentException("Cannot assign male student to a girls hostel");
+                }
+                if ((g.equals("female") || g.equals("f")) && isBoysHostel) {
+                    throw new IllegalArgumentException("Cannot assign female student to a boys hostel");
+                }
+            }
+        }
+
         student.setRoomId(dto.roomId());
         student.setHostelId(dto.hostelId());
         studentRepository.save(student);
         return StudentMapper.toDTO(student);
     }
 
+    // New: fetch students belonging to a hostel
+    public List<StudentResponseDTO> getStudentsByHostelId(UUID hostelId) {
+        if (hostelId == null) return List.of();
+        List<Student> students = studentRepository.findByHostelId(hostelId.toString());
+        return students.stream().map(StudentMapper::toDTO).toList();
+    }
     // New: Fetch hostel object for a student (returns Map or null)
     public Map<String, Object> getHostelForStudent(UUID studentId) {
         Student student = studentRepository.findById(studentId)
@@ -137,7 +174,9 @@ public class StudentService {
 
         String url = "http://localhost:4001/hostels/" + hostelId;
         try {
-            Map<String, Object> hostel = restTemplate.getForObject(url, Map.class);
+            Object resp = restTemplate.getForObject(url, Object.class);
+            if (resp == null) return null;
+            Map<String, Object> hostel = objectMapper.convertValue(resp, new TypeReference<Map<String, Object>>(){});
             return hostel;
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
@@ -152,67 +191,52 @@ public class StudentService {
         }
     }
 
-    // New: Fetch room object for a student (returns Map or null)
+    // New: Fetch room object for a student (returns Map or null) - simplified and uses RoomController endpoint
     public Map<String, Object> getRoomForStudent(UUID studentId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found with id " + studentId));
 
         Object rawRoom = student.getRoomId();
-        String roomId = null;
         if (rawRoom == null) {
             return null;
         }
-        if (rawRoom instanceof String) {
-            String s = (String) rawRoom;
-            // handle case where DB stored a JSON-stringified object
-            if (s.trim().startsWith("{")) {
-                try {
-                    Map parsed = objectMapper.readValue(s, Map.class);
+
+        // Extract roomId from possible representations (string, JSON-string, or object)
+        String roomId = null;
+        try {
+            if (rawRoom instanceof String) {
+                String s = ((String) rawRoom).trim();
+                if (s.startsWith("{")) {
+                    // stored as JSON string
+                    Map<String, Object> parsed = objectMapper.readValue(s, new TypeReference<Map<String, Object>>(){});
                     Object val = parsed.getOrDefault("roomId", parsed.get("id"));
-                    roomId = val == null ? null : String.valueOf(val);
-                } catch (Exception ex) {
-                    log.warn("Failed to parse roomId string for student {}: {}", studentId, ex.getMessage());
-                    roomId = s; // fallback to raw
+                    roomId = (val == null) ? null : String.valueOf(val);
+                } else {
+                    roomId = s;
                 }
             } else {
-                roomId = s;
-            }
-        } else {
-            // if stored as object, try to extract common fields
-            try {
-                Map asMap = objectMapper.convertValue(rawRoom, Map.class);
+                // stored as an object-like structure
+                Map<String, Object> asMap = objectMapper.convertValue(rawRoom, new TypeReference<Map<String, Object>>(){});
                 Object val = asMap.getOrDefault("roomId", asMap.get("id"));
-                roomId = val == null ? null : String.valueOf(val);
-            } catch (Exception ex) {
-                roomId = String.valueOf(rawRoom);
+                roomId = (val == null) ? null : String.valueOf(val);
             }
+        } catch (Exception ex) {
+            log.warn("Failed to extract roomId for student {}: {}", studentId, ex.getMessage());
+            // fall through and return null below
         }
 
         if (roomId == null || roomId.isBlank()) return null;
 
-        // Try two room endpoints: /hostels/rooms/{roomId} and /rooms/{roomId}
-        String url1 = "http://localhost:4001/hostels/rooms/" + roomId;
-        String url2 = "http://localhost:4001/rooms/" + roomId;
+        // Call the RoomController endpoint (single canonical source)
+        String url = "http://localhost:4001/hostels/rooms/" + roomId;
         try {
-            Map<String, Object> room = restTemplate.getForObject(url1, Map.class);
-            return room;
+            Object resp = restTemplate.getForObject(url, Object.class);
+            if (resp == null) return null;
+            return objectMapper.convertValue(resp, new TypeReference<Map<String, Object>>(){});
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                // try second endpoint
-                try {
-                    Map<String, Object> room = restTemplate.getForObject(url2, Map.class);
-                    return room;
-                } catch (HttpClientErrorException e2) {
-                    if (e2.getStatusCode() == HttpStatus.NOT_FOUND) {
-                        log.info("Room not found for id {}", roomId);
-                        return null;
-                    }
-                    log.error("Error fetching room {}: {}", roomId, e2.getMessage());
-                    return null;
-                } catch (Exception ex) {
-                    log.error("Unexpected error fetching room {}: {}", roomId, ex.getMessage());
-                    return null;
-                }
+                log.info("Room not found for id {}", roomId);
+                return null;
             }
             log.error("Error fetching room {}: {}", roomId, e.getMessage());
             return null;
@@ -229,5 +253,13 @@ public class StudentService {
         student.setHostelId(null);
         studentRepository.save(student);
         return StudentMapper.toDTO(student);
+    }
+
+    public StudentMinDetailsDTO getStudentMinDetails(UUID id) {
+        Student student = studentRepository.findById(id).orElseThrow(() ->
+                new StudentNotFoundException("Student not found with id " + id));
+
+
+        return StudentMapper.toMinDetails(student);
     }
 }

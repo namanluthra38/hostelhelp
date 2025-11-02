@@ -39,6 +39,16 @@ public class RoomController {
         return ResponseEntity.ok(rooms);
     }
 
+    @GetMapping("/hostel/{hostelId}")
+    // public access - returns rooms belonging to a hostel
+    public ResponseEntity<List<RoomResponseDTO>> getRoomsByHostel(@PathVariable UUID hostelId) {
+        List<RoomResponseDTO> rooms = roomService.getRoomsByHostelId(hostelId)
+                .stream()
+                .map(roomMapper::toResponseDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(rooms);
+    }
+
     @GetMapping("/{roomId}")
     // allow public access during development
     public ResponseEntity<RoomResponseDTO> getRoom(@PathVariable UUID roomId) {

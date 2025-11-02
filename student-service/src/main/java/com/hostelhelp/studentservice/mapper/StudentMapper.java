@@ -1,5 +1,6 @@
 package com.hostelhelp.studentservice.mapper;
 
+import com.hostelhelp.studentservice.dto.StudentMinDetailsDTO;
 import com.hostelhelp.studentservice.dto.StudentRequestDTO;
 import com.hostelhelp.studentservice.dto.StudentResponseDTO;
 import com.hostelhelp.studentservice.model.Student;
@@ -40,6 +41,18 @@ public class StudentMapper {
                 student.getRoomId(),
                 student.getCreatedAt(),
                 student.getUpdatedAt()
+        );
+    }
+
+    // New: map Student -> StudentMinDetailsDTO
+    public static StudentMinDetailsDTO toMinDetails(Student student) {
+        if (student == null) return null;
+        return new StudentMinDetailsDTO(
+                student.getName(),
+                student.getEmail(),
+                student.getGraduationYear(),
+                student.getUid(),
+                student.getPhone()
         );
     }
 }
