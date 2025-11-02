@@ -41,10 +41,34 @@ public class WardenController {
     @GetMapping("/{id}")
     @Operation(summary = "Get a warden by ID")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<WardenResponseDTO> getStudent(@PathVariable UUID id) {
+    public ResponseEntity<WardenResponseDTO> getWarden(@PathVariable UUID id) {
         try {
-            WardenResponseDTO student = wardenService.getWarden(id);
-            return ResponseEntity.ok().body(student);
+            WardenResponseDTO warden = wardenService.getWarden(id);
+            return ResponseEntity.ok().body(warden);
+        } catch (WardenNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{id}/name")
+    @Operation(summary = "Get a warden name by ID")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WARDEN')")
+    public ResponseEntity<String> getWardenName(@PathVariable UUID id) {
+        try {
+            String name = wardenService.getWarden(id).name();
+            return ResponseEntity.ok().body(name);
+        } catch (WardenNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{id}/hostel-id")
+    @Operation(summary = "Get a warden hostelId by ID")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WARDEN')")
+    public ResponseEntity<String> getWardenHostelId(@PathVariable UUID id) {
+        try {
+            String hostelId = wardenService.getWarden(id).hostelId();
+            return ResponseEntity.ok().body(hostelId);
         } catch (WardenNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
@@ -80,6 +104,17 @@ public class WardenController {
         WardenResponseDTO student = wardenService.getWardenByEmail(email);
         return ResponseEntity.ok().body(student);
     }
+
+    @GetMapping("/me/hostelId")
+    @Operation(summary = "Get current student's hostelId")
+    @PreAuthorize("hasRole('WARDEN')")
+    public ResponseEntity<String> getCurrentWardenHostelId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String hostelId = wardenService.getWardenByEmail(authentication.getName()).hostelId();
+        return ResponseEntity.ok().body(hostelId);
+    }
+
+
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

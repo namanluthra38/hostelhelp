@@ -7,6 +7,7 @@ import java.util.Map;
 
 public record CreateRequestDTO(
         @NotNull String studentId,
+        @NotNull String hostelId,
         @NotNull RequestType type,
-        @NotNull Map<String, Object> details
+        Map<String, Object> details
 ) {}

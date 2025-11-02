@@ -9,6 +9,7 @@ public class RequestMapper {
     public static Request toEntity(CreateRequestDTO dto) {
         return Request.builder()
                 .studentId(dto.studentId())
+                .hostelId(dto.hostelId())
                 .type(dto.type())
                 .details(dto.details())
                 .status(Request.Status.PENDING)
@@ -19,6 +20,7 @@ public class RequestMapper {
         return new RequestResponseDTO(
                 request.getId(),
                 request.getStudentId(),
+                request.getHostelId(),
                 request.getType(),
                 request.getDetails(),
                 request.getStatus(),

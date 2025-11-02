@@ -47,4 +47,17 @@ public class JwtUtil {
             throw new JwtException("Invalid JWT");
         }
     }
+
+    // New helper: extract the role claim from a validated token. Returns null if not present.
+    public String getRoleFromToken(String token) {
+        try {
+            var parsed = Jwts.parser().verifyWith((SecretKey) secretKey)
+                    .build()
+                    .parseSignedClaims(token);
+            Object roleObj = parsed.getBody().get("role");
+            return roleObj == null ? null : roleObj.toString();
+        } catch (Exception e) {
+            throw new JwtException("Unable to parse token");
+        }
+    }
 }

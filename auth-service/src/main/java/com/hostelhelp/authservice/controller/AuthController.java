@@ -6,12 +6,13 @@ import com.hostelhelp.authservice.dto.UserDTO;
 import com.hostelhelp.authservice.model.User;
 import com.hostelhelp.authservice.service.AuthService;
 import com.hostelhelp.authservice.service.UserService;
+import com.hostelhelp.authservice.util.JwtUtil;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -22,7 +23,7 @@ import java.util.UUID;
 public class AuthController {
     private final AuthService authService;
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
     private final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     @GetMapping("/test")
@@ -55,6 +56,25 @@ public class AuthController {
         return authService.validateToken(authHeader.substring(7))
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    // New endpoint: return the role encoded in the Bearer token.
+    @GetMapping("/role")
+    public ResponseEntity<String> getRoleFromToken(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String token = authHeader.substring(7);
+        try {
+            if (!authService.validateToken(token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            String role = jwtUtil.getRoleFromToken(token);
+            if (role == null) return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(role);
+        } catch (JwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @PostMapping("/register")

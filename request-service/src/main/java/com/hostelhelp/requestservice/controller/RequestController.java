@@ -59,6 +59,7 @@ public class RequestController {
             @RequestParam String reviewedBy,
             @RequestHeader("Authorization") String authHeader
     ) {
+
         try {
             String token = authHeader.substring(7); // remove "Bearer "
             System.out.println("Token: " + token);

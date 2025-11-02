@@ -15,6 +15,11 @@ Accept: application/json
 Authorization: Bearer {{token}}
 ###
 
+GET http://localhost:4002/wardens/me/hostelId
+Accept: application/json
+Authorization: Bearer {{token}}
+###
+
 ### Create a new warden
 POST http://localhost:4002/wardens
 Content-Type: application/json
@@ -22,12 +27,12 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "Nolan",
-  "email": "nl@example.com",
+  "name": "Querentin",
+  "email": "qt@example.com",
   "password": "securePass123",
   "gender": "Male",
   "phone": "9876543210",
-  "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
+  "hostelId": "4aa64d9a-2ddd-4778-bb35-2874ac6ce576"
 }
 
 ###

@@ -40,8 +40,7 @@ public class RequestService {
     // Allow new HOSTEL_JOIN if any existing pending join is for a different hostel
     public RequestResponseDTO createJoinRequest(CreateRequestDTO dto) {
 
-        Object hostelIdObj = (dto.details() != null) ? dto.details().get("hostelId") : null;
-        String incomingHostelId = (hostelIdObj == null) ? null : String.valueOf(hostelIdObj);
+        String incomingHostelId = dto.hostelId();
 
         log.info("Creating join request for student={} hostelId={}", dto.studentId(), incomingHostelId);
 
@@ -128,29 +127,92 @@ public class RequestService {
 
     // Update request status & reviewedBy
     @SuppressWarnings("unused")
-    public Optional<RequestResponseDTO> updateRequestStatus(String id, Request.Status status, String reviewedBy, String token) {
-        return repository.findById(id).map(request -> {
-            request.setStatus(status);
-            request.setReviewedBy(reviewedBy);
-            repository.save(request);
+    public Optional<RequestResponseDTO> updateRequestStatus(String id, Request.Status status, String reviewedBy, String token) throws Exception {
+
+        Optional<Request> req = repository.findById(id);
+        // If request not found, return empty Optional
+        if (req.isEmpty()) return Optional.empty();
+
+        // Authorization checks:
+        // - fetch role from auth service using provided token
+        // - if role == STUDENT => unauthorized
+        // - if role == WARDEN => fetch warden's hostelId from warden-service (/wardens/me/hostelId) and ensure it matches request's hostelId
+        // - ADMIN can proceed
+
+        if (token == null || token.isBlank()) {
+            throw new Exception("unauthorized");
+        }
+
+        String callerRole;
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(token);
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
+            // Note: calling auth-service to get role. Using /auth/role as requested.
+            callerRole = restTemplate.exchange("http://localhost:4004/auth/role", HttpMethod.GET, entity, String.class).getBody();
+        } catch (Exception e) {
+            log.warn("Failed to fetch role from auth service: {}", e.getMessage());
+            throw new Exception("unauthorized");
+        }
+
+        if (callerRole == null) throw new Exception("unauthorized");
+        String roleUpper = callerRole.trim().toUpperCase();
+
+        if ("STUDENT".equals(roleUpper)) {
+            throw new Exception("unauthorized");
+        }
+
+        if ("WARDEN".equals(roleUpper)) {
+            // fetch warden's hostelId and compare with request's hostelId
+            String wardenHostelId;
             try {
-                if (request.getType() == Request.RequestType.HOSTEL_JOIN && request.getStatus() == Request.Status.APPROVED) {
-                    log.info("Assigning hostel to student: {} for request {}", request.getStudentId(), id);
-                    assignHostelIfApproved(request, token);
-                    log.info("Hostel assigned successfully to student: {} for request {}", request.getStudentId(), id);
-                }
-                if (request.getType() == Request.RequestType.HOSTEL_LEAVE && request.getStatus() == Request.Status.APPROVED) {
-                    log.info("Trying to leave hostel for student: {} for request {}", request.getStudentId(), id);
-                    leaveHostelIfApproved(request, token);
-                    log.info("Hostel left successfully for student: {} for request {}", request.getStudentId(), id);
-                }
+                HttpHeaders headers = new HttpHeaders();
+                headers.setBearerAuth(token);
+                HttpEntity<Void> entity = new HttpEntity<>(headers);
+                wardenHostelId = restTemplate.exchange("http://localhost:4002/wardens/me/hostelId", HttpMethod.GET, entity, String.class).getBody();
             } catch (Exception e) {
-                log.error(e.getMessage());
-                throw e;
+                log.warn("Failed to fetch warden hostelId: {}", e.getMessage());
+                throw new Exception("unauthorized");
             }
-            return RequestMapper.toResponse(request);
-        });
-    }
+
+            Request requestObj = req.get();
+            Object existingHostelObj = requestObj.getHostelId();
+            String requestHostelId = (existingHostelObj == null) ? null : String.valueOf(existingHostelObj);
+
+            if (requestHostelId == null) {
+                // If the request doesn't contain a hostelId we can't authorize the warden
+                throw new Exception("unauthorized");
+            }
+
+            if (!requestHostelId.equals(wardenHostelId)) {
+                throw new Exception("unauthorized");
+            }
+        }
+
+         return req.map(request -> {
+             request.setStatus(status);
+             request.setReviewedBy(reviewedBy);
+             repository.save(request);
+             try {
+                 if (request.getType() == Request.RequestType.HOSTEL_JOIN && request.getStatus() == Request.Status.APPROVED) {
+                     log.info("Assigning hostel to student: {} for request {}", request.getStudentId(), id);
+                     assignHostelIfApproved(request, token);
+                     log.info("Hostel assigned successfully to student: {} for request {}", request.getStudentId(), id);
+                 }
+                 if (request.getType() == Request.RequestType.HOSTEL_LEAVE && request.getStatus() == Request.Status.APPROVED) {
+                     log.info("Trying to leave hostel for student: {} for request {}", request.getStudentId(), id);
+                     leaveHostelIfApproved(request, token);
+                     log.info("Hostel left successfully for student: {} for request {}", request.getStudentId(), id);
+                 }
+             } catch (Exception e) {
+                 log.error(e.getMessage());
+                 request.setStatus(Request.Status.PENDING);
+                 request.setReviewedBy(null);
+                 throw e;
+             }
+             return RequestMapper.toResponse(request);
+         });
+     }
 
     @SuppressWarnings("unused")
     private void leaveHostelIfApproved(Request request, String token) {
@@ -223,7 +285,7 @@ public class RequestService {
 
     private void assignHostelIfApproved(Request request, String token) {
         String studentId = request.getStudentId();
-        String hostelId = (String) request.getDetails().get("hostelId");
+        String hostelId = request.getHostelId();
 
         if (studentId == null || hostelId == null) {
             log.warn("Cannot assign hostel: missing studentId or hostelId for request {}", request.getId());
@@ -239,6 +301,16 @@ public class RequestService {
             HttpEntity<Void> entity = new HttpEntity<>(headers);
             restTemplate.exchange(roomAssignUrl, HttpMethod.POST, entity, Void.class);
             log.info("Room assigned successfully in hostel {} to student {}", hostelId, studentId);
+            for(Request r :
+                    repository.findByStudentId(studentId).stream().filter(
+                            req ->
+                                    req.getType() == Request.RequestType.HOSTEL_JOIN
+                                    && req.getStatus() == Request.Status.PENDING
+                                    ).toList()){
+                r.setReviewedBy("AUTO");
+                r.setStatus(Request.Status.REJECTED);
+                repository.save(r);
+            }
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode().value() == 404) {
                 log.error("Room assignment failed: student or hostel not found for student {} in hostel {}", studentId, hostelId);
@@ -265,8 +337,7 @@ public class RequestService {
                 .anyMatch(r -> {
                     if (r.getType() != Request.RequestType.HOSTEL_JOIN) return false;
                     if (r.getStatus() != Request.Status.PENDING) return false;
-                    Object existingHostelObj = (r.getDetails() != null) ? r.getDetails().get("hostelId") : null;
-                    String existingHostelId = (existingHostelObj == null) ? null : String.valueOf(existingHostelObj);
+                    String existingHostelId = r.getHostelId();
                     return hostelId.equals(existingHostelId);
                 });
     }
@@ -275,7 +346,7 @@ public class RequestService {
     public List<RequestResponseDTO> getRequestsByHostel(String hostelId) {
         return repository.findAll()
                 .stream()
-                .filter(request -> request.getDetails().containsKey("hostelId") && request.getDetails().get("hostelId").equals(hostelId))
+                .filter(request -> request.getHostelId().equals(hostelId))
                 .map(RequestMapper::toResponse)
                 .collect(Collectors.toList());
 

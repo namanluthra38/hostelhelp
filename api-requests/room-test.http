@@ -5,7 +5,7 @@ Authorization: Bearer {{token}}
 
 {
 
-  "hostelId": "c37c7726-609f-4a61-865f-1ddd04f1f687",
+  "hostelId": "4aa64d9a-2ddd-4778-bb35-2874ac6ce576",
   "totalSeats": 5
 }
 

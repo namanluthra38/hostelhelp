@@ -8,6 +8,7 @@ import java.util.Map;
 public record RequestResponseDTO(
         String id,
         String studentId,
+        String hostelId,
         RequestType type,
         Map<String, Object> details,
         Status status,

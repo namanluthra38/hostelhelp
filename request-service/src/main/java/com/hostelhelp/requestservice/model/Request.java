@@ -20,6 +20,8 @@ public class Request {
 
     private String studentId;
 
+    private String hostelId;
+
     private RequestType type;
 
     private Map<String, Object> details;

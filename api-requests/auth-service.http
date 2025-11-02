@@ -24,7 +24,7 @@ POST http://localhost:4004/auth/login
 Content-Type: application/json
 
 {
-  "email": "nl@example.com",
+  "email": "qt@example.com",
   "password": "securePass123"
 }
 
@@ -37,3 +37,7 @@ GET http://localhost:4004/auth/test
 ###
 GET http://localhost:4004/auth/validate
 Authorization: Bearer {{token}}
+###
+GET http://localhost:4004/auth/role
+Authorization: Bearer {{token}}
+

@@ -118,6 +118,7 @@ public class StudentService {
     public StudentResponseDTO assignRoom(UUID studentId, AssignRoomDTO dto) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found with id " + studentId));
+        if(student.getHostelId() != null) throw new IllegalArgumentException("Already hostel assigned");
         student.setRoomId(dto.roomId());
         student.setHostelId(dto.hostelId());
         studentRepository.save(student);

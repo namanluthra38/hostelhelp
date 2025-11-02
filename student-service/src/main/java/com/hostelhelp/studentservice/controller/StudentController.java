@@ -118,12 +118,19 @@ public class StudentController {
     @PostMapping("/{studentId}/assign-room")
     @Operation(summary = "Assign a room to a student")
     @PreAuthorize("hasAnyRole('ADMIN', 'WARDEN')")
-    public ResponseEntity<StudentResponseDTO> assignRoom(
+    public ResponseEntity<?> assignRoom(
             @PathVariable UUID studentId,
             @RequestBody AssignRoomDTO dto
     ) {
-        StudentResponseDTO updatedStudent = studentService.assignRoom(studentId, dto);
-        return ResponseEntity.ok(updatedStudent);
+        try {
+            StudentResponseDTO updatedStudent = studentService.assignRoom(studentId, dto);
+            return ResponseEntity.ok(updatedStudent);
+        } catch (StudentNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+        catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/{studentId}/leave")
