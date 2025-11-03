@@ -13,10 +13,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -235,7 +235,8 @@ public class RequestService {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setBearerAuth(token);
                 HttpEntity<Void> entity = new HttpEntity<>(headers);
-                Map studentObj = restTemplate.exchange("http://localhost:4000/students/" + studentId, HttpMethod.GET, entity, Map.class).getBody();
+                ParameterizedTypeReference<Map<String, Object>> ptr = new ParameterizedTypeReference<>() {};
+                Map<String, Object> studentObj = restTemplate.exchange("http://localhost:4000/students/" + studentId, HttpMethod.GET, entity, ptr).getBody();
                 if (studentObj != null && studentObj.get("roomId") != null) {
                     roomId = String.valueOf(studentObj.get("roomId"));
                 }
@@ -344,9 +345,14 @@ public class RequestService {
 
 
     public List<RequestResponseDTO> getRequestsByHostel(String hostelId) {
+        // If caller didn't provide a hostelId, return an empty list rather than matching nulls.
+        if (hostelId == null) {
+            return List.of();
+        }
+
         return repository.findAll()
                 .stream()
-                .filter(request -> request.getHostelId().equals(hostelId))
+                .filter(request -> java.util.Objects.equals(hostelId, request.getHostelId()))
                 .map(RequestMapper::toResponse)
                 .collect(Collectors.toList());
 

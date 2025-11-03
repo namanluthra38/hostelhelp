@@ -39,7 +39,8 @@ public class RequestController {
     }
 
     @GetMapping("/hostel/{hostelId}")
-    public ResponseEntity<List<RequestResponseDTO>> getRequestsByHostel(@PathVariable String hostelId) {
+    public ResponseEntity<List<RequestResponseDTO>> getRequestsByHostel(@PathVariable String hostelId, @RequestHeader("Authorization") String authHeader) {
+        System.out.println("HostelId: " + hostelId);
         return ResponseEntity.ok(service.getRequestsByHostel(hostelId));
     }
 
