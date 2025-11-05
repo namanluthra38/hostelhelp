@@ -77,6 +77,24 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/id")
+    public ResponseEntity<String> getIdFromToken(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String token = authHeader.substring(7);
+        try {
+            if (!authService.validateToken(token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            String id = jwtUtil.getRoleFromToken(token);
+            if (id == null) return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(id);
+        } catch (JwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody UserDTO userDTO) {
         User user = User.builder()

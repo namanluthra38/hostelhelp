@@ -1,5 +1,5 @@
 ### Create initial pending join request for hostel A (setup)
-POST http://localhost:4003/requests/join
+POST http://localhost:4004/requests/join
 Content-Type: application/json
 
 {

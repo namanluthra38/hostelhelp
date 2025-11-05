@@ -60,4 +60,17 @@ public class JwtUtil {
             throw new JwtException("Unable to parse token");
         }
     }
+
+    public String getIdFromToken(String token) {
+        try {
+            var parsed = Jwts.parser().verifyWith((SecretKey) secretKey)
+                    .build()
+                    .parseSignedClaims(token);
+            Object idObj = parsed.getBody().get("id");
+            return idObj == null ? null : idObj.toString();
+        } catch (Exception e) {
+            throw new JwtException("Unable to parse token");
+        }
+    }
+
 }

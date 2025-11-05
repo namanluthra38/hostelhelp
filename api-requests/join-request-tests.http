@@ -1,9 +1,10 @@
 ### Join request - expected 200 (create new join request)
-POST http://localhost:4003/requests/join
+POST http://localhost:4004/requests/join
 Content-Type: application/json
+Authorization: Bearer {token}
 
 {
-  "studentId": "aea9cdc8-3d7b-4c41-9e43-bbd607c9d764",
+  "studentId": "fbaba17b-e2d7-4583-a019-757e457075b0",
   "type": "HOSTEL_JOIN",
   "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
 

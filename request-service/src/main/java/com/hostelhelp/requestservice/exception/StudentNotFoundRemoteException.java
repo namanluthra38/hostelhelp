@@ -1,4 +1,4 @@
-package com.hostelhelp.requestservice.service;
+package com.hostelhelp.requestservice.exception;
 
 public class StudentNotFoundRemoteException extends RuntimeException {
     public StudentNotFoundRemoteException(String message) {

@@ -10,11 +10,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("hostels/rooms")
 @RequiredArgsConstructor
 public class RoomController {
@@ -54,6 +54,15 @@ public class RoomController {
     public ResponseEntity<RoomResponseDTO> getRoom(@PathVariable UUID roomId) {
         Room room = roomService.getRoomById(roomId);
         return ResponseEntity.ok(roomMapper.toResponseDTO(room));
+    }
+
+    // New endpoint: return only the room number for a given room id
+    @GetMapping("/{roomId}/number")
+    // allow public access
+    public ResponseEntity<?> getRoomNumber(@PathVariable UUID roomId) {
+        Room room = roomService.getRoomById(roomId);
+        if (room == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(Map.of("roomNumber", room.getRoomNumber()));
     }
 
     @DeleteMapping("/{roomId}")

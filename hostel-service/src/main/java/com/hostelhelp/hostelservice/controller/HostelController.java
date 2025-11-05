@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/hostels")
 @Tag(name = "Hostel", description = "API for managing Hostels")
 public class HostelController {

@@ -66,7 +66,7 @@ public class RoomService {
                 Room savedRoom = roomRepository.save(room);
                 // REST call to student-service to update student's roomId and hostelId
                 try {
-                    String studentServiceUrl = "http://localhost:4000/students/" + studentId + "/assign-room";
+                    String studentServiceUrl = "http://api-gateway:4004/students/" + studentId + "/assign-room";
                     org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
                     headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
                     headers.setBearerAuth(token);

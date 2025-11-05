@@ -41,6 +41,6 @@ public class Request {
     }
 
     public enum RequestType {
-        HOSTEL_JOIN, HOSTEL_LEAVE, COMPLAINT
+        HOSTEL_JOIN, HOSTEL_LEAVE, HOSTEL_CHANGE, ROOM_CHANGE
     }
 }

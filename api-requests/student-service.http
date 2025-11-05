@@ -1,5 +1,5 @@
 ### Get all students
-GET http://localhost:4000/students
+GET http://localhost:4004/students
 Authorization: Bearer {{token}}
 Accept: application/json
 ###
@@ -17,17 +17,17 @@ Authorization: Bearer {{token}}
 }
 ###
 ### Create a new student
-POST http://localhost:4000/students
+POST http://localhost:4004/students
 Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "gautam",
-  "email": "gg@example.com",
+  "name": "Sam",
+  "email": "sam@example.com",
   "password": "securePass123",
-  "graduationYear": 2026,
-  "uid": "CUgg",
-  "address": "Mumbai",
+  "graduationYear": 2027,
+  "uid": "23BCS11111",
+  "address": "UP",
   "dateOfBirth": "2004-08-15",
   "gender": "Male",
   "phone": "+919876543210"
@@ -62,7 +62,7 @@ Accept: application/json
 ###
 
 ### Get all students
-GET http://localhost:4000/students/me/full
+GET http://localhost:4004/students/me/full
 Authorization: Bearer {{token}}
 Accept: application/json
 

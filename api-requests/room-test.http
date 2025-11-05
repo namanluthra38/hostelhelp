@@ -5,19 +5,21 @@ Authorization: Bearer {{token}}
 
 {
 
-  "hostelId": "4aa64d9a-2ddd-4778-bb35-2874ac6ce576",
-  "totalSeats": 5
+  "hostelId": "af0db16d-f9c5-405b-b153-eeb8541996c7",
+  "totalSeats": 3
 }
 
 ### FAIL: Create Room (missing required field)
-POST http://localhost:4001/hostels/rooms
+POST http://localhost:4004/hostels/rooms
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "hostelId": "b1a2c3d4-e5f6-7890-abcd-1234567890ab"
-
+  "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3",
+  "totalSeats": 3
 }
+
+
 
 ### PASS: Get All Rooms
 GET http://localhost:4001/hostels/rooms

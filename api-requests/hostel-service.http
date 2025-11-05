@@ -11,12 +11,11 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "NC2",
+  "name": "Zakir C",
   "hasAC": true,
-  "numberOfRooms": 100,
-  "numberOfSeatsPerRoom": 5,
+  "numberOfRooms": 700,
   "isBoysHostel": true,
-  "chargesPerSemester": 5000
+  "chargesPerSemester": 70000
 }
 
 ###
@@ -37,7 +36,9 @@ Authorization: Bearer {{token}}
 }
 
 ###
-
+GET http://localhost:4004/hostels/db4954b0-8337-4b60-a10e-32786d437ce3/is-boys
+Accept: application/json
+Authorization: Bearer {{token}}
 ### Delete a hostel
 DELETE http://localhost:4004/hostels/6d77df19-9a89-4776-bfa1-661500d2081b
 Accept: application/json

@@ -24,7 +24,6 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/students")
 @Tag(name = "Student", description = "API for managing Students")
 public class StudentController {

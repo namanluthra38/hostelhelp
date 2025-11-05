@@ -10,7 +10,7 @@ Accept: application/json
 Authorization: Bearer {{token}}
 ###
 
-GET http://localhost:4002/wardens/me
+GET http://localhost:4004/wardens/me/full
 Accept: application/json
 Authorization: Bearer {{token}}
 ###
@@ -27,12 +27,12 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "Querentin",
-  "email": "qt@example.com",
+  "name": "Rajkumar Hirani",
+  "email": "rajkumar@example.com",
   "password": "securePass123",
   "gender": "Male",
   "phone": "9876543210",
-  "hostelId": "4aa64d9a-2ddd-4778-bb35-2874ac6ce576"
+  "hostelId": "89d1f22c-d87d-4fc1-81ec-be34dbbe50ca"
 }
 
 ###

@@ -133,12 +133,6 @@ public class RequestService {
         // If request not found, return empty Optional
         if (req.isEmpty()) return Optional.empty();
 
-        // Authorization checks:
-        // - fetch role from auth service using provided token
-        // - if role == STUDENT => unauthorized
-        // - if role == WARDEN => fetch warden's hostelId from warden-service (/wardens/me/hostelId) and ensure it matches request's hostelId
-        // - ADMIN can proceed
-
         if (token == null || token.isBlank()) {
             throw new Exception("unauthorized");
         }
@@ -148,8 +142,8 @@ public class RequestService {
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(token);
             HttpEntity<Void> entity = new HttpEntity<>(headers);
-            // Note: calling auth-service to get role. Using /auth/role as requested.
-            callerRole = restTemplate.exchange("http://localhost:4004/auth/role", HttpMethod.GET, entity, String.class).getBody();
+            // Note: calling auth-service to get role via api-gateway
+            callerRole = restTemplate.exchange("http://api-gateway:4004/auth/role", HttpMethod.GET, entity, String.class).getBody();
         } catch (Exception e) {
             log.warn("Failed to fetch role from auth service: {}", e.getMessage());
             throw new Exception("unauthorized");
@@ -169,7 +163,7 @@ public class RequestService {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setBearerAuth(token);
                 HttpEntity<Void> entity = new HttpEntity<>(headers);
-                wardenHostelId = restTemplate.exchange("http://localhost:4002/wardens/me/hostelId", HttpMethod.GET, entity, String.class).getBody();
+                wardenHostelId = restTemplate.exchange("http://api-gateway:4004/wardens/me/hostelId", HttpMethod.GET, entity, String.class).getBody();
             } catch (Exception e) {
                 log.warn("Failed to fetch warden hostelId: {}", e.getMessage());
                 throw new Exception("unauthorized");
@@ -236,7 +230,7 @@ public class RequestService {
                 headers.setBearerAuth(token);
                 HttpEntity<Void> entity = new HttpEntity<>(headers);
                 ParameterizedTypeReference<Map<String, Object>> ptr = new ParameterizedTypeReference<>() {};
-                Map<String, Object> studentObj = restTemplate.exchange("http://localhost:4000/students/" + studentId, HttpMethod.GET, entity, ptr).getBody();
+                Map<String, Object> studentObj = restTemplate.exchange("http://api-gateway:4004/students/" + studentId, HttpMethod.GET, entity, ptr).getBody();
                 if (studentObj != null && studentObj.get("roomId") != null) {
                     roomId = String.valueOf(studentObj.get("roomId"));
                 }
@@ -253,7 +247,7 @@ public class RequestService {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setBearerAuth(token);
                 HttpEntity<Void> entity = new HttpEntity<>(headers);
-                String removeUrl = "http://localhost:4001/hostels/rooms/remove-student?studentId=" + studentId + "&roomId=" + roomId;
+                String removeUrl = "http://api-gateway:4004/hostels/rooms/remove-student?studentId=" + studentId + "&roomId=" + roomId;
                 restTemplate.exchange(removeUrl, HttpMethod.POST, entity, Object.class);
                 log.info("Removed student {} from room {} successfully", studentId, roomId);
             } catch (Exception e) {
@@ -270,7 +264,7 @@ public class RequestService {
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(token);
             HttpEntity<Void> entity = new HttpEntity<>(headers);
-            restTemplate.exchange("http://localhost:4000/students/" + studentId + "/leave", HttpMethod.POST, entity, Object.class);
+            restTemplate.exchange("http://api-gateway:4004/students/" + studentId + "/leave", HttpMethod.POST, entity, Object.class);
             log.info("Student {} leave processed in student-service", studentId);
         } catch (Exception e) {
             log.error("Failed to process leave for student {}: {}", studentId, e.getMessage());
@@ -294,7 +288,7 @@ public class RequestService {
         }
 
         log.info("assigning hostel with id: {} to student {}", hostelId, studentId);
-        String roomAssignUrl = "http://localhost:4001/hostels/rooms/allocate?hostelId=" + hostelId + "&studentId=" + studentId;
+        String roomAssignUrl = "http://api-gateway:4004/hostels/rooms/allocate?hostelId=" + hostelId + "&studentId=" + studentId;
         try {
             log.info("Calling room allocation endpoint for hostel {} student {}", hostelId, studentId);
             HttpHeaders headers = new HttpHeaders();

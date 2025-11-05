@@ -4,7 +4,7 @@ import com.hostelhelp.requestservice.dto.CreateRequestDTO;
 import com.hostelhelp.requestservice.dto.RequestResponseDTO;
 import com.hostelhelp.requestservice.model.Request;
 import com.hostelhelp.requestservice.service.RequestService;
-import com.hostelhelp.requestservice.service.StudentNotFoundRemoteException;
+import com.hostelhelp.requestservice.exception.StudentNotFoundRemoteException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

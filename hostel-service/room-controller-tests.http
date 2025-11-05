@@ -1,19 +1,31 @@
 ### PASS: Create Room
-POST http://localhost:4002/hostels/rooms
+POST http://localhost:4001/hostels/rooms
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-  "roomNumber": "101",
-  "hostelId": "b1a2c3d4-e5f6-7890-abcd-1234567890ab",
-  "capacity": 2
+  "roomNumber": "102",
+  "hostelId": "c37c7726-609f-4a61-865f-1ddd04f1f687"
+}
+
+###
+### Create Room (requires ADMIN token)
+POST http://localhost:4001/hostels/rooms
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "hostelId": "c37c7726-609f-4a61-865f-1ddd04f1f687",
+  "roomNumber": 101,
+  "totalSeats": 3
 }
 
 ### FAIL: Create Room (missing required field)
-POST http://localhost:4002/hostels/rooms
+POST http://localhost:4001/hostels/rooms
 Content-Type: application/json
 
 {
-  "hostelId": "b1a2c3d4-e5f6-7890-abcd-1234567890ab"
+  "hostelId": "c37c7726-609f-4a61-865f-1ddd04f1f687"
 }
 
 ### PASS: Get All Rooms

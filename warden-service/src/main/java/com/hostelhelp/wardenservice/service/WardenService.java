@@ -51,8 +51,8 @@ public class WardenService {
                 WardenMapper.toModel(wardenRequestDTO));
 
         UserDTO userDTO = new UserDTO(newWarden.getEmail(), newWarden.getPassword(), "WARDEN");
-        //restTemplate.postForObject("http://api-gateway:4004/auth/register", userDTO, Void.class);
-        restTemplate.postForObject("http://localhost:4004/auth/register", userDTO, Void.class);
+        // Use api-gateway for inter-service auth calls
+        restTemplate.postForObject("http://api-gateway:4004/auth/register", userDTO, Void.class);
 
 
         return WardenMapper.toDTO(newWarden);

@@ -32,7 +32,7 @@ public class StudentCompositeController {
     private final RestTemplateBuilder restTemplateBuilder;
     private final ObjectMapper objectMapper; // injected
 
-    @Value("${services.hostel.base-url:http://localhost:4001}")
+    @Value("${services.hostel.base-url:http://api-gateway:4004}")
     private String hostelServiceBaseUrl;
 
     /**

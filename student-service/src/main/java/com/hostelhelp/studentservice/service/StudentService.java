@@ -61,8 +61,8 @@ public class StudentService {
         Student newStudent = studentRepository.save(
                 StudentMapper.toModel(studentRequestDTO));
         UserDTO userDTO = new UserDTO(newStudent.getEmail(), newStudent.getPassword(), "STUDENT");
-        //restTemplate.postForObject("http://api-gateway:4004/auth/register", userDTO, Void.class);
-        restTemplate.postForObject("http://localhost:4004/auth/register", userDTO, Void.class);
+        restTemplate.postForObject("http://api-gateway:4004/auth/register", userDTO, Void.class);
+        //restTemplate.postForObject("http://localhost:4004/auth/register", userDTO, Void.class);
         return StudentMapper.toDTO(newStudent);
     }
 
@@ -124,7 +124,8 @@ public class StudentService {
         // Verify gender compatibility using hostel-service boolean endpoint
         Boolean isBoysHostel = null;
         try {
-            String hostelUrl = "http://localhost:4001/hostels/" + dto.hostelId() + "/is-boys";
+            //String hostelUrl = "http://localhost:4001/hostels/" + dto.hostelId() + "/is-boys";
+            String hostelUrl = "http://api-gateway:4004/hostels/" + dto.hostelId() + "/is-boys";
             isBoysHostel = restTemplate.getForObject(hostelUrl, Boolean.class);
         } catch (HttpClientErrorException e) {
             // If hostel not found or other client error, rethrow as IllegalArgumentException for caller
@@ -172,7 +173,8 @@ public class StudentService {
             return null;
         }
 
-        String url = "http://localhost:4001/hostels/" + hostelId;
+        //String url = "http://localhost:4001/hostels/" + hostelId;
+        String url = "http://api-gateway:4004/hostels/" + hostelId;
         try {
             Object resp = restTemplate.getForObject(url, Object.class);
             if (resp == null) return null;
@@ -228,7 +230,8 @@ public class StudentService {
         if (roomId == null || roomId.isBlank()) return null;
 
         // Call the RoomController endpoint (single canonical source)
-        String url = "http://localhost:4001/hostels/rooms/" + roomId;
+        //String url = "http://localhost:4001/hostels/rooms/" + roomId;
+        String url = "http://api-gateway:4004/hostels/rooms/" + roomId;
         try {
             Object resp = restTemplate.getForObject(url, Object.class);
             if (resp == null) return null;

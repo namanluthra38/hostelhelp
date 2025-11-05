@@ -1,0 +1,42 @@
+### Login (set {{token}})
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+
+{
+  "email": "leo@example.com",
+  "password": "securePass123"
+}
+
+> {% client.global.set("token", response.body.token) %}
+
+### Create complaint (authorized)
+POST http://localhost:4004/complaints
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Bad food",
+  "description": "The faucet in the 2nd floor bathroom is leaking and floods the floor.",
+  "attachments": [
+    "https://example.com/attachment1.jpg"
+  ]
+}
+
+### Get all complaints (authorized)
+GET http://localhost:4003/complaints
+Authorization: Bearer {{token}}
+
+### Get complaint by id (replace :id)
+GET http://localhost:4003/complaints/:id
+Authorization: Bearer {{token}}
+
+### Get complaints for a hostel (public)
+GET http://localhost:4003/complaints/hostel/db4954b0-8337-4b60-a10e-32786d437ce3
+
+### Get complaints by student (public)
+GET http://localhost:4003/complaints/student/21a489b6-cc96-493a-9d3a-af3258234053
+
+### Delete complaint (authorized)
+DELETE http://localhost:4003/complaints/6908e2db8fb328ee41ff1747
+Authorization: Bearer {{token}}
+
