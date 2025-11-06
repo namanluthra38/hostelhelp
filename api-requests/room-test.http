@@ -1,12 +1,12 @@
 ### PASS: Create Room
-POST http://localhost:4001/hostels/rooms
+POST http://localhost:4004/hostels/rooms
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
 
-  "hostelId": "af0db16d-f9c5-405b-b153-eeb8541996c7",
-  "totalSeats": 3
+  "hostelId": "6d77df19-9a89-4776-bfa1-661500d2081b",
+  "totalSeats": 4
 }
 
 ### FAIL: Create Room (missing required field)

@@ -13,7 +13,7 @@ import com.hostelhelp.studentservice.model.Student;
 import com.hostelhelp.studentservice.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -116,46 +116,56 @@ public class StudentService {
     }
 
 
-    public StudentResponseDTO assignRoom(UUID studentId, AssignRoomDTO dto) {
+    public StudentResponseDTO assignRoom(UUID studentId, AssignRoomDTO dto, String token) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found with id " + studentId));
-        if(student.getHostelId() != null) throw new IllegalArgumentException("Already hostel assigned");
+        if (student.getHostelId() != null) throw new IllegalArgumentException("Already hostel assigned");
 
-        // Verify gender compatibility using hostel-service boolean endpoint
         Boolean isBoysHostel = null;
         try {
-            //String hostelUrl = "http://localhost:4001/hostels/" + dto.hostelId() + "/is-boys";
             String hostelUrl = "http://api-gateway:4004/hostels/" + dto.hostelId() + "/is-boys";
-            isBoysHostel = restTemplate.getForObject(hostelUrl, Boolean.class);
-        } catch (HttpClientErrorException e) {
-            // If hostel not found or other client error, rethrow as IllegalArgumentException for caller
-            if (e.getStatusCode().value() == 404) {
-                throw new IllegalArgumentException("Hostel not found: " + dto.hostelId());
+            if (token == null || token.isBlank()) {
+                // If you expect caller always to forward token, treat as auth error:
+                throw new IllegalArgumentException("Missing authentication token for verifying hostel");
             }
-            throw new IllegalArgumentException("Failed to verify hostel type: " + e.getMessage());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(token);
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<Boolean> resp = restTemplate.exchange(hostelUrl, HttpMethod.GET, entity, Boolean.class);
+            if (!resp.getStatusCode().is2xxSuccessful()) {
+                throw new IllegalArgumentException("Failed to verify hostel type: " + resp.getStatusCode());
+            }
+            isBoysHostel = resp.getBody();
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new IllegalArgumentException("Hostel not found: " + dto.hostelId());
+        } catch (HttpClientErrorException e) {
+            // bubble up a clear message for caller
+            log.error("Error calling hostel service for hostel {}: {}", dto.hostelId(), e.getMessage());
+            throw new IllegalArgumentException("Failed to verify hostel type: " + e.getStatusCode() + " " + e.getMessage());
         } catch (Exception e) {
+            log.error("Error calling hostel service for hostel {}: {}", dto.hostelId(), e.getMessage());
             throw new IllegalArgumentException("Failed to verify hostel type: " + e.getMessage());
         }
 
-        // if we could determine hostel type, enforce gender rules
-        if (isBoysHostel != null) {
-            String gender = student.getGender();
-            if (gender != null) {
-                String g = gender.trim().toLowerCase();
-                if ((g.equals("male") || g.equals("m")) && !isBoysHostel) {
-                    throw new IllegalArgumentException("Cannot assign male student to a girls hostel");
-                }
-                if ((g.equals("female") || g.equals("f")) && isBoysHostel) {
-                    throw new IllegalArgumentException("Cannot assign female student to a boys hostel");
-                }
+        // enforce gender rules when we could determine hostel type
+        if (isBoysHostel != null && student.getGender() != null) {
+            String g = student.getGender().trim().toLowerCase();
+            if ((g.equals("male") || g.equals("m")) && !isBoysHostel) {
+                throw new IllegalArgumentException("Cannot assign male student to a girls hostel");
+            }
+            if ((g.equals("female") || g.equals("f")) && isBoysHostel) {
+                throw new IllegalArgumentException("Cannot assign female student to a boys hostel");
             }
         }
 
         student.setRoomId(dto.roomId());
         student.setHostelId(dto.hostelId());
         studentRepository.save(student);
+        log.info("Student {} assigned hostel {} room {}", studentId, dto.hostelId(), dto.roomId());
         return StudentMapper.toDTO(student);
     }
+
 
     // New: fetch students belonging to a hostel
     public List<StudentResponseDTO> getStudentsByHostelId(UUID hostelId) {

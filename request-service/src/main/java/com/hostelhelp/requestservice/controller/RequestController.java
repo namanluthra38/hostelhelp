@@ -2,16 +2,21 @@ package com.hostelhelp.requestservice.controller;
 
 import com.hostelhelp.requestservice.dto.CreateRequestDTO;
 import com.hostelhelp.requestservice.dto.RequestResponseDTO;
+import com.hostelhelp.requestservice.exception.NoVacantRoomException;
+import com.hostelhelp.requestservice.exception.RemoteServiceException;
+import com.hostelhelp.requestservice.exception.UnauthorizedActionException;
 import com.hostelhelp.requestservice.model.Request;
 import com.hostelhelp.requestservice.service.RequestService;
 import com.hostelhelp.requestservice.exception.StudentNotFoundRemoteException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("requests")
@@ -19,6 +24,7 @@ import java.util.List;
 public class RequestController {
 
     private final RequestService service;
+    private final static org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RequestController.class);
 
     // Create a new request
     @PostMapping
@@ -58,21 +64,46 @@ public class RequestController {
             @PathVariable String id,
             @RequestParam Request.Status status,
             @RequestParam String reviewedBy,
-            @RequestHeader("Authorization") String authHeader
+            @RequestHeader(value = "Authorization", required = false) String authHeader
     ) {
+        String token = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        } else {
+            log.warn("Missing or malformed Authorization header for request {}", id);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        log.info("Request [{}] status update attempt -> {} by {}", id, status, reviewedBy);
 
         try {
-            String token = authHeader.substring(7); // remove "Bearer "
-            System.out.println("Token: " + token);
-            return service.updateRequestStatus(id, status, reviewedBy, token)
-                    .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (StudentNotFoundRemoteException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
+            Optional<RequestResponseDTO> opt = service.updateRequestStatus(id, status, reviewedBy, token);
+            return opt.map(ResponseEntity::ok)
+                    .orElseGet(() -> {
+                        log.info("Request {} not found", id);
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                    });
+        } catch (UnauthorizedActionException ex) {
+            log.warn("Unauthorized attempt to update request {}: {}", id, ex.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+        } catch (StudentNotFoundRemoteException ex) {
+            log.error("Remote student not found while processing request {}: {}", id, ex.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (NoVacantRoomException ex) {
+            log.error("No vacant room when processing request {}: {}", id, ex.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            log.warn("Bad request while processing request {}: {}", id, ex.getMessage());
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (RemoteServiceException ex) {
+            log.error("Remote service error while processing request {}: {}", id, ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(ex.getMessage());
+        } catch (Exception ex) {
+            log.error("Unexpected error while updating request {}: {}", id, ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error");
         }
     }
+
 
     // Delete request
     @DeleteMapping("/{id}")
@@ -121,7 +152,7 @@ public class RequestController {
         if (exists) {
             return ResponseEntity.ok("Found");
         } else {
-            return ResponseEntity.status(404).body("Not Found");
+            return ResponseEntity.status(204).body("Not Found");
         }
     }
 
@@ -135,7 +166,7 @@ public class RequestController {
         if (exists) {
             return ResponseEntity.ok("Found");
         } else {
-            return ResponseEntity.status(404).body("Not Found");
+            return ResponseEntity.status(204).body("Not Found");
         }
     }
 }

@@ -1,11 +1,19 @@
 package com.hostelhelp.hostelservice.service;
 
 import com.hostelhelp.hostelservice.dto.AssignRoomDTO;
+import com.hostelhelp.hostelservice.exception.NoVacantRoomException;
+import com.hostelhelp.hostelservice.exception.RemoteServiceException;
+import com.hostelhelp.hostelservice.exception.StudentNotFoundRemoteException;
 import com.hostelhelp.hostelservice.model.Room;
 import com.hostelhelp.hostelservice.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,6 +28,7 @@ public class RoomService {
 
     private final RoomRepository roomRepository;
     private final RestTemplate restTemplate;
+    private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RoomService.class);
 
     // Create room with automatic numbering starting from 101
     public Room createRoom(Room room) {
@@ -59,33 +68,54 @@ public class RoomService {
     // Allocate student to first available room in the hostel
     public Room allocateStudent(UUID hostelId, UUID studentId, String token) {
         List<Room> rooms = roomRepository.findByHostelId(hostelId);
+        log.debug("Found {} rooms for hostel {}", rooms.size(), hostelId);
 
         for (Room room : rooms) {
             if (room.hasVacancy()) {
                 room.addStudent(studentId);
                 Room savedRoom = roomRepository.save(room);
-                // REST call to student-service to update student's roomId and hostelId
+                log.info("Reserved room {} for student {} (hostel {})", savedRoom.getId(), studentId, hostelId);
+
+                // Prepare assign-room REST call
                 try {
                     String studentServiceUrl = "http://api-gateway:4004/students/" + studentId + "/assign-room";
-                    org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
-                    headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-                    headers.setBearerAuth(token);
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+                    if (token != null && !token.isBlank()) headers.setBearerAuth(token);
+
                     AssignRoomDTO dto = new AssignRoomDTO(hostelId.toString(), savedRoom.getId().toString());
-                    org.springframework.http.HttpEntity<AssignRoomDTO> entity = new org.springframework.http.HttpEntity<>(dto, headers);
-                    restTemplate.postForEntity(studentServiceUrl, entity, Void.class);
-                    System.out.println("Student " + studentId + " assigned to room " + savedRoom.getId());
-                } catch (org.springframework.web.client.HttpClientErrorException e) {
-                    System.err.println("Failed to update student's roomId in student-service: " + e.getMessage());
-                    System.err.println("Response body: " + e.getResponseBodyAsString());
-                    throw new RuntimeException("Failed to update student's roomId in student-service: " + e.getMessage());
+                    HttpEntity<AssignRoomDTO> entity = new HttpEntity<>(dto, headers);
+
+                    ResponseEntity<Void> response = restTemplate.postForEntity(studentServiceUrl, entity, Void.class);
+                    if (!response.getStatusCode().is2xxSuccessful()) {
+                        log.error("Student service assign-room returned non-2xx: {} for student {}", response.getStatusCode(), studentId);
+                        throw new RemoteServiceException("Failed to update student record: status " + response.getStatusCode());
+                    }
+
+                    log.info("Student {} assigned to room {} successfully (remote updated)", studentId, savedRoom.getId());
+                    return savedRoom;
+                } catch (HttpClientErrorException.NotFound e) {
+                    log.error("Student service responded 404 for student {}: {}", studentId, e.getMessage());
+                    // Undo local assignment before throwing
+                    room.removeStudent(studentId);
+                    roomRepository.save(room);
+                    throw new StudentNotFoundRemoteException("Student not found: " + studentId);
+                } catch (HttpClientErrorException e) {
+                    log.error("Student service client error: {} body: {}", e.getStatusCode(), e.getResponseBodyAsString());
+                    room.removeStudent(studentId);
+                    roomRepository.save(room);
+                    throw new RemoteServiceException("Student service error: " + e.getMessage(), e);
                 } catch (Exception e) {
-                    System.err.println("Failed to update student's roomId in student-service: " + e.getMessage());
-                    throw new RuntimeException("Failed to update student's roomId in student-service: " + e.getMessage());
+                    log.error("Unexpected error calling student service: {}", e.getMessage(), e);
+                    room.removeStudent(studentId);
+                    roomRepository.save(room);
+                    throw new RemoteServiceException("Failed to notify student service: " + e.getMessage(), e);
                 }
-                return savedRoom;
             }
         }
-        throw new RuntimeException("No vacant rooms in this hostel");
+
+        log.warn("No vacant rooms found for hostel {}", hostelId);
+        throw new NoVacantRoomException("No vacant rooms in hostel: " + hostelId);
     }
 
     public Room removeStudent(UUID studentId, UUID roomId, String token) {

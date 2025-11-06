@@ -2,6 +2,10 @@ package com.hostelhelp.requestservice.service;
 
 import com.hostelhelp.requestservice.dto.CreateRequestDTO;
 import com.hostelhelp.requestservice.dto.RequestResponseDTO;
+import com.hostelhelp.requestservice.exception.NoVacantRoomException;
+import com.hostelhelp.requestservice.exception.RemoteServiceException;
+import com.hostelhelp.requestservice.exception.StudentNotFoundRemoteException;
+import com.hostelhelp.requestservice.exception.UnauthorizedActionException;
 import com.hostelhelp.requestservice.mapper.RequestMapper;
 import com.hostelhelp.requestservice.model.Request;
 import com.hostelhelp.requestservice.repository.RequestRepository;
@@ -10,7 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
@@ -127,86 +133,149 @@ public class RequestService {
 
     // Update request status & reviewedBy
     @SuppressWarnings("unused")
-    public Optional<RequestResponseDTO> updateRequestStatus(String id, Request.Status status, String reviewedBy, String token) throws Exception {
-
-        Optional<Request> req = repository.findById(id);
-        // If request not found, return empty Optional
-        if (req.isEmpty()) return Optional.empty();
-
-        if (token == null || token.isBlank()) {
-            throw new Exception("unauthorized");
+    @Transactional
+    public Optional<RequestResponseDTO> updateRequestStatus(
+            String id, Request.Status status, String reviewedBy, String token
+    ) {
+        Request request = repository.findById(id).orElse(null);
+        if (request == null) {
+            log.debug("Request with id {} not found", id);
+            return Optional.empty();
         }
 
-        String callerRole;
+        if (token == null || token.isBlank()) {
+            throw new UnauthorizedActionException("Missing authorization token");
+        }
+
+        String callerRole = fetchRoleFromAuthService(token);
+        log.debug("Caller role for request {}: {}", id, callerRole);
+
+        authorize(callerRole, request, token);
+
+        // Save previous state for rollback if needed
+        Request.Status previousStatus = request.getStatus();
+        String previousReviewedBy = request.getReviewedBy();
+
+        // Apply new status
+        request.setStatus(status);
+        request.setReviewedBy(reviewedBy);
+        repository.save(request);
+        log.info("Request {} status changed {} -> {} by {}", id, previousStatus, status, reviewedBy);
+
+        try {
+            // Only on APPROVED do we perform side-effects (assign / leave)
+            if (status == Request.Status.APPROVED) {
+                if (request.getType() == Request.RequestType.HOSTEL_JOIN) {
+                    log.info("Processing APPROVED HOSTEL_JOIN for request {} student {}", id, request.getStudentId());
+                    assignHostelIfApproved(request, token);
+                    log.info("Completed hostel assignment for request {}", id);
+                } else if (request.getType() == Request.RequestType.HOSTEL_LEAVE) {
+                    log.info("Processing APPROVED HOSTEL_LEAVE for request {} student {}", id, request.getStudentId());
+                    leaveHostelIfApproved(request, token);
+                    log.info("Completed hostel leave for request {}", id);
+                }
+            }
+        } catch (StudentNotFoundRemoteException e) {
+            // propagate so controller returns 404
+            rollbackRequestTo(previousStatus, previousReviewedBy, request);
+            throw e;
+        } catch (NoVacantRoomException | RemoteServiceException | IllegalArgumentException e) {
+            // expected recoverable remote/service errors -> rollback to pending & rethrow mapped exception
+            rollbackRequestTo(previousStatus, previousReviewedBy, request);
+            throw e;
+        } catch (Exception e) {
+            // any other unexpected error - rollback and rethrow as RemoteServiceException
+            rollbackRequestTo(previousStatus, previousReviewedBy, request);
+            throw new RemoteServiceException("Failed processing approved request: " + e.getMessage(), e);
+        }
+
+        return Optional.of(RequestMapper.toResponse(request));
+    }
+
+    private void rollbackRequestTo(Request.Status prevStatus, String prevReviewedBy, Request request) {
+        try {
+            request.setStatus(prevStatus != null ? prevStatus : Request.Status.PENDING);
+            request.setReviewedBy(prevReviewedBy);
+            repository.save(request);
+            log.warn("Rolled back request {} to status {} reviewedBy={}", request.getId(), request.getStatus(), request.getReviewedBy());
+        } catch (Exception e) {
+            log.error("Failed to rollback request {}: {}", request.getId(), e.getMessage(), e);
+            // swallowing intentionally because original exception will be handled by caller/controller
+        }
+    }
+
+    private String fetchRoleFromAuthService(String token) {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(token);
             HttpEntity<Void> entity = new HttpEntity<>(headers);
-            // Note: calling auth-service to get role via api-gateway
-            callerRole = restTemplate.exchange("http://api-gateway:4004/auth/role", HttpMethod.GET, entity, String.class).getBody();
+
+            ResponseEntity<String> resp = restTemplate.exchange(
+                    "http://api-gateway:4004/auth/role", HttpMethod.GET, entity, String.class
+            );
+            if (!resp.getStatusCode().is2xxSuccessful() || resp.getBody() == null) {
+                log.warn("Auth service returned non-2xx or empty body for role");
+                throw new UnauthorizedActionException("Unable to determine caller role");
+            }
+            return resp.getBody().trim().toUpperCase();
+        } catch (UnauthorizedActionException e) {
+            throw e;
         } catch (Exception e) {
-            log.warn("Failed to fetch role from auth service: {}", e.getMessage());
-            throw new Exception("unauthorized");
+            log.warn("Error fetching role from auth service: {}", e.getMessage());
+            throw new RemoteServiceException("Auth service unavailable", e);
         }
+    }
 
-        if (callerRole == null) throw new Exception("unauthorized");
-        String roleUpper = callerRole.trim().toUpperCase();
+    private String fetchWardenHostelId(String token) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(token);
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        if ("STUDENT".equals(roleUpper)) {
-            throw new Exception("unauthorized");
+            ResponseEntity<String> resp = restTemplate.exchange(
+                    "http://api-gateway:4004/wardens/me/hostelId", HttpMethod.GET, entity, String.class
+            );
+            if (!resp.getStatusCode().is2xxSuccessful() || resp.getBody() == null) {
+                log.warn("Warden hostelId endpoint returned non-2xx or empty body");
+                throw new UnauthorizedActionException("Unable to determine warden's hostelId");
+            }
+            return resp.getBody().trim();
+        } catch (UnauthorizedActionException e) {
+            throw e;
+        } catch (Exception e) {
+            log.warn("Error fetching warden hostelId: {}", e.getMessage());
+            throw new RemoteServiceException("Warden info service unavailable", e);
         }
+    }
 
-        if ("WARDEN".equals(roleUpper)) {
-            // fetch warden's hostelId and compare with request's hostelId
-            String wardenHostelId;
-            try {
-                HttpHeaders headers = new HttpHeaders();
-                headers.setBearerAuth(token);
-                HttpEntity<Void> entity = new HttpEntity<>(headers);
-                wardenHostelId = restTemplate.exchange("http://api-gateway:4004/wardens/me/hostelId", HttpMethod.GET, entity, String.class).getBody();
-            } catch (Exception e) {
-                log.warn("Failed to fetch warden hostelId: {}", e.getMessage());
-                throw new Exception("unauthorized");
-            }
+    private void authorize(String roleUpper, Request request, String token) {
+        if (roleUpper == null) throw new UnauthorizedActionException("Unknown role");
 
-            Request requestObj = req.get();
-            Object existingHostelObj = requestObj.getHostelId();
-            String requestHostelId = (existingHostelObj == null) ? null : String.valueOf(existingHostelObj);
-
-            if (requestHostelId == null) {
-                // If the request doesn't contain a hostelId we can't authorize the warden
-                throw new Exception("unauthorized");
-            }
-
-            if (!requestHostelId.equals(wardenHostelId)) {
-                throw new Exception("unauthorized");
-            }
+        switch (roleUpper) {
+            case "STUDENT":
+                throw new UnauthorizedActionException("Students are not authorized to change request status");
+            case "WARDEN":
+                String wardenHostelId = fetchWardenHostelId(token);
+                Object existing = request.getHostelId();
+                String requestHostelId = existing == null ? null : String.valueOf(existing);
+                if (requestHostelId == null) {
+                    throw new UnauthorizedActionException("Request does not specify a hostelId; warden cannot authorize");
+                }
+                if (!requestHostelId.equals(wardenHostelId)) {
+                    throw new UnauthorizedActionException("Warden not authorized for this hostel");
+                }
+                break;
+            case "ADMIN":
+                // admin allowed for all
+                break;
+            default:
+                throw new UnauthorizedActionException("Unrecognized role: " + roleUpper);
         }
+    }
 
-         return req.map(request -> {
-             request.setStatus(status);
-             request.setReviewedBy(reviewedBy);
-             repository.save(request);
-             try {
-                 if (request.getType() == Request.RequestType.HOSTEL_JOIN && request.getStatus() == Request.Status.APPROVED) {
-                     log.info("Assigning hostel to student: {} for request {}", request.getStudentId(), id);
-                     assignHostelIfApproved(request, token);
-                     log.info("Hostel assigned successfully to student: {} for request {}", request.getStudentId(), id);
-                 }
-                 if (request.getType() == Request.RequestType.HOSTEL_LEAVE && request.getStatus() == Request.Status.APPROVED) {
-                     log.info("Trying to leave hostel for student: {} for request {}", request.getStudentId(), id);
-                     leaveHostelIfApproved(request, token);
-                     log.info("Hostel left successfully for student: {} for request {}", request.getStudentId(), id);
-                 }
-             } catch (Exception e) {
-                 log.error(e.getMessage());
-                 request.setStatus(Request.Status.PENDING);
-                 request.setReviewedBy(null);
-                 throw e;
-             }
-             return RequestMapper.toResponse(request);
-         });
-     }
+
+
+
 
     @SuppressWarnings("unused")
     private void leaveHostelIfApproved(Request request, String token) {

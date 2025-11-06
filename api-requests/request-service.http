@@ -9,14 +9,14 @@ Content-Type: application/json
 
 }
 ###
-POST http://localhost:4003/requests/leave
+POST http://localhost:4004/requests/leave
 Content-Type: application/json
 
 {
-    "studentId": "21a489b6-cc96-493a-9d3a-af3258234053",
+    "studentId": "690b8c34a8f1a40a4a403b15",
     "type": "HOSTEL_LEAVE",
     "details": {
-      "roomId": "3240a8b8-9f6c-4c60-ab57-fb96f15f3c1f",
+      "roomId": "e4e6fb26-7d7b-4f24-aad0-f563d3149adc",
       "message": "I want to leave hostel"
     }
 }

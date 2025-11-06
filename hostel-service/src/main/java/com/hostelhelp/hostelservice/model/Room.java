@@ -45,4 +45,8 @@ public class Room {
             throw new RuntimeException("Room is full");
         }
     }
+
+    public void removeStudent(UUID studentId) {
+        studentIds.remove(studentId);
+    }
 }

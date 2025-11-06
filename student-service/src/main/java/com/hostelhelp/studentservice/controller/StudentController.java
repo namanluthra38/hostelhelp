@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -127,20 +128,23 @@ public class StudentController {
     }
 
     @PostMapping("/{studentId}/assign-room")
-    @Operation(summary = "Assign a room to a student")
-    @PreAuthorize("hasAnyRole('ADMIN', 'WARDEN')")
+    @PreAuthorize("hasAnyRole('ADMIN','WARDEN')")
     public ResponseEntity<?> assignRoom(
             @PathVariable UUID studentId,
-            @RequestBody AssignRoomDTO dto
+            @RequestBody AssignRoomDTO dto,
+            @RequestHeader(value = "Authorization", required = false) String authHeader
     ) {
         try {
-            StudentResponseDTO updatedStudent = studentService.assignRoom(studentId, dto);
+            String token = (authHeader != null && authHeader.startsWith("Bearer ")) ? authHeader.substring(7) : null;
+            StudentResponseDTO updatedStudent = studentService.assignRoom(studentId, dto, token);
             return ResponseEntity.ok(updatedStudent);
         } catch (StudentNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-        catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.error("Error assigning room for student {}: {}", studentId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to assign room");
         }
     }
 

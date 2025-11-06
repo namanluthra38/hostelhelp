@@ -21,18 +21,18 @@ Authorization: Bearer {{token}}
 ###
 
 ### Create a new warden
-POST http://localhost:4002/wardens
+POST http://localhost:4004/wardens
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "Rajkumar Hirani",
-  "email": "rajkumar@example.com",
+  "name": "Brad Pitt",
+  "email": "brad@example.com",
   "password": "securePass123",
   "gender": "Male",
   "phone": "9876543210",
-  "hostelId": "89d1f22c-d87d-4fc1-81ec-be34dbbe50ca"
+  "hostelId": "c37c7726-609f-4a61-865f-1ddd04f1f687"
 }
 
 ###
