@@ -1,0 +1,9 @@
+{
+  "id": "c26f0b10-92ab-452b-99d7-1cc2ac758cc6",
+  "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3",
+  "roomNumber": 105,
+  "totalSeats": 3,
+  "studentIds": [],
+  "filledSeats": 0,
+  "hasVacancy": true
+}

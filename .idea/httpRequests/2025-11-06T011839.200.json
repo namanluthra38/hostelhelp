@@ -1,0 +1,10 @@
+{
+  "id": "61bf2988-ac3d-4240-b8fc-fab9b1eef2f1",
+  "name": "Brad Pitt",
+  "email": "brad@example.com",
+  "gender": "Male",
+  "phone": "9876543210",
+  "hostelId": "c37c7726-609f-4a61-865f-1ddd04f1f687",
+  "createdAt": "2025-11-05T19:48:39.286498865",
+  "updatedAt": "2025-11-05T19:48:39.286522222"
+}

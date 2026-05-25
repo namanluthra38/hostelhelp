@@ -1,0 +1,10 @@
+{
+  "id": "320cf7b0-62eb-4f99-90d8-1aa07712bd37",
+  "name": "David fincher",
+  "email": "dave@example.com",
+  "gender": "Male",
+  "phone": "9876543210",
+  "hostelId": "89d1f22c-d87d-4fc1-81ec-be34dbbe50ca",
+  "createdAt": "2025-11-05T19:47:30.677790669",
+  "updatedAt": "2025-11-05T19:47:30.678263599"
+}

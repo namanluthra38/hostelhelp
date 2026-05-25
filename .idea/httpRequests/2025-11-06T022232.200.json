@@ -1,0 +1,82 @@
+[
+  {
+    "id": "dae27c2f-387e-4a7f-81a9-5c191b2cb9d3",
+    "name": "Christopher Nolan",
+    "email": "nl@example.com",
+    "gender": "Male",
+    "phone": "9876543210",
+    "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3",
+    "createdAt": "2025-11-01T10:21:16.237372",
+    "updatedAt": "2025-11-01T10:21:16.237372"
+  },
+  {
+    "id": "ec12f927-6070-4a88-b4e9-996bf84e0bdf",
+    "name": "Querentin Tarantino",
+    "email": "qt@example.com",
+    "gender": "Male",
+    "phone": "9876543212",
+    "hostelId": "4aa64d9a-2ddd-4778-bb35-2874ac6ce576",
+    "createdAt": "2025-11-02T17:05:35.799903",
+    "updatedAt": "2025-11-02T17:05:35.799903"
+  },
+  {
+    "id": "dca30eb1-0485-454e-b842-3858bd5f5901",
+    "name": "Madhuri Dixit",
+    "email": "madhuri@example.com",
+    "gender": "Female",
+    "phone": "9876543211",
+    "hostelId": "971e6e7b-4639-4c4f-895f-e6fd73a17d6a",
+    "createdAt": "2025-11-05T00:14:02.7706",
+    "updatedAt": "2025-11-05T00:14:02.7706"
+  },
+  {
+    "id": "bb3dc11d-4182-4cd9-bede-207b9a14140c",
+    "name": "Aish Rai",
+    "email": "aish@example.com",
+    "gender": "Female",
+    "phone": "9876543210",
+    "hostelId": "af0db16d-f9c5-405b-b153-eeb8541996c7",
+    "createdAt": "2025-11-05T00:18:11.81252",
+    "updatedAt": "2025-11-05T00:18:11.81252"
+  },
+  {
+    "id": "59d7577e-3e25-41dd-9131-139ccf7c09c1",
+    "name": "James Cameron",
+    "email": "james@example.com",
+    "gender": "Male",
+    "phone": "9876543210",
+    "hostelId": "b4a0f5df-f94f-4dff-be90-880527dac058",
+    "createdAt": "2025-11-05T00:19:17.160109",
+    "updatedAt": "2025-11-05T00:19:17.160109"
+  },
+  {
+    "id": "7cb23a00-e089-41b2-b74b-262d85d641b9",
+    "name": "Rajkumar Hirani",
+    "email": "rajkumar@example.com",
+    "gender": "Male",
+    "phone": "9876543210",
+    "hostelId": "89d1f22c-d87d-4fc1-81ec-be34dbbe50ca",
+    "createdAt": "2025-11-05T00:20:27.770287",
+    "updatedAt": "2025-11-05T00:20:27.770287"
+  },
+  {
+    "id": "320cf7b0-62eb-4f99-90d8-1aa07712bd37",
+    "name": "David fincher",
+    "email": "dave@example.com",
+    "gender": "Male",
+    "phone": "9876543210",
+    "hostelId": "89d1f22c-d87d-4fc1-81ec-be34dbbe50ca",
+    "createdAt": "2025-11-05T19:47:30.677791",
+    "updatedAt": "2025-11-05T19:47:30.678264"
+  },
+  {
+    "id": "61bf2988-ac3d-4240-b8fc-fab9b1eef2f1",
+    "name": "Brad Pitt",
+    "email": "brad@example.com",
+    "gender": "Male",
+    "phone": "9876543210",
+    "hostelId": "c37c7726-609f-4a61-865f-1ddd04f1f687",
+    "createdAt": "2025-11-05T19:48:39.286499",
+    "updatedAt": "2025-11-05T19:48:39.286522"
+  }
+]

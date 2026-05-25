@@ -38,6 +38,15 @@ public class WardenController {
         return ResponseEntity.ok().body(wardens);
     }
 
+    // New endpoint: get wardens by hostelId
+    @GetMapping("/hostel/{hostelId}")
+    @Operation(summary = "Get wardens by hostel ID")
+    @PreAuthorize("hasAnyRole('WARDEN','ADMIN')")
+    public ResponseEntity<List<WardenResponseDTO>> getWardensByHostel(@PathVariable String hostelId) {
+        List<WardenResponseDTO> wardens = wardenService.getWardensByHostelId(hostelId);
+        return ResponseEntity.ok().body(wardens);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get a warden by ID")
     @PreAuthorize("hasAnyRole('ADMIN')")

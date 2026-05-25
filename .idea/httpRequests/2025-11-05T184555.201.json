@@ -1,0 +1,12 @@
+{
+  "id": "690b4e0af0c9ba8d6e0fa388",
+  "studentId": "7de0f5c1-228a-4ab5-9ba8-d0560e1c1aae",
+  "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3",
+  "title": "Bad faucet in hostel bathroom",
+  "description": "The faucet in the 2nd floor bathroom is leaking and floods the floor.",
+  "status": "OPEN",
+  "attachments": [
+    "https://example.com/attachment1.jpg"
+  ],
+  "createdAt": "2025-11-05T13:15:54.473774102"
+}

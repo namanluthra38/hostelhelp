@@ -8,15 +8,18 @@ import com.hostelhelp.wardenservice.exception.WardenNotFoundException;
 import com.hostelhelp.wardenservice.mapper.WardenMapper;
 import com.hostelhelp.wardenservice.model.Warden;
 import com.hostelhelp.wardenservice.repository.WardenRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class WardenService {
+    private static final Logger logger = LoggerFactory.getLogger(WardenService.class);
+
     private final WardenRepository wardenRepository;
     private final RestTemplate restTemplate;
 
@@ -31,6 +34,11 @@ public class WardenService {
 
         return wardens.stream().map(WardenMapper::toDTO).toList();
 
+    }
+
+    public List<WardenResponseDTO> getWardensByHostelId(String hostelId) {
+        List<Warden> wardens = wardenRepository.findByHostelId(hostelId);
+        return wardens.stream().map(WardenMapper::toDTO).toList();
     }
 
     public WardenResponseDTO getWarden(UUID id) {
@@ -90,8 +98,7 @@ public class WardenService {
             String deleteUrl = "http://api-gateway:4004/auth/user/" + email;
             restTemplate.delete(deleteUrl);
         } catch (Exception e) {
-            System.err.println("Failed to delete user in auth-service for email: " + email);
-            e.printStackTrace();
+            logger.error("Failed to delete user in auth-service for email: {}", email, e);
         }
     }
 }

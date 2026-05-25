@@ -1,0 +1,22 @@
+{
+  "warden": {
+    "id": "dae27c2f-387e-4a7f-81a9-5c191b2cb9d3",
+    "name": "Christopher Nolan",
+    "email": "nl@example.com",
+    "gender": "Male",
+    "phone": "9876543210",
+    "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3",
+    "createdAt": "2025-11-01T10:21:16.237372",
+    "updatedAt": "2025-11-01T10:21:16.237372"
+  },
+  "hostel": {
+    "id": "db4954b0-8337-4b60-a10e-32786d437ce3",
+    "name": "NC2",
+    "hasAC": true,
+    "numberOfRooms": 120,
+    "chargesPerSemester": 60000.0,
+    "isBoysHostel": true,
+    "createdAt": "2025-09-30T13:52:38.042123",
+    "updatedAt": "2025-09-30T13:53:18.240673"
+  }
+}

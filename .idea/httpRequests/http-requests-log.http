@@ -1,0 +1,834 @@
+GET http://localhost:4004/wardens
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM3MjA0NSwiZXhwIjoxNzYyNDA4MDQ1fQ.8DsBtHQvqrUa1_FunrQ05TlXJq-QovVtLDv762lfR5c
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+<> 2025-11-06T022232.200.json
+
+###
+
+POST http://localhost:4004/hostels/rooms
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM3MjA0NSwiZXhwIjoxNzYyNDA4MDQ1fQ.8DsBtHQvqrUa1_FunrQ05TlXJq-QovVtLDv762lfR5c
+Content-Length: 76
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+
+  "hostelId": "6d77df19-9a89-4776-bfa1-661500d2081b",
+  "totalSeats": 4
+}
+
+<> 2025-11-06T021956.200.json
+
+###
+
+POST http://localhost:4004/hostels/rooms
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM3MjA0NSwiZXhwIjoxNzYyNDA4MDQ1fQ.8DsBtHQvqrUa1_FunrQ05TlXJq-QovVtLDv762lfR5c
+Content-Length: 76
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+
+  "hostelId": "971e6e7b-4639-4c4f-895f-e6fd73a17d6a",
+  "totalSeats": 3
+}
+
+<> 2025-11-06T021915.200.json
+
+###
+
+POST http://localhost:4004/hostels/rooms
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM3MjA0NSwiZXhwIjoxNzYyNDA4MDQ1fQ.8DsBtHQvqrUa1_FunrQ05TlXJq-QovVtLDv762lfR5c
+Content-Length: 76
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+
+  "hostelId": "af0db16d-f9c5-405b-b153-eeb8541996c7",
+  "totalSeats": 3
+}
+
+<> 2025-11-06T021833.200.json
+
+###
+
+POST http://localhost:4004/wardens
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM3MjA0NSwiZXhwIjoxNzYyNDA4MDQ1fQ.8DsBtHQvqrUa1_FunrQ05TlXJq-QovVtLDv762lfR5c
+Content-Length: 186
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "name": "Brad Pitt",
+  "email": "brad@example.com",
+  "password": "securePass123",
+  "gender": "Male",
+  "phone": "9876543210",
+  "hostelId": "c37c7726-609f-4a61-865f-1ddd04f1f687"
+}
+
+<> 2025-11-06T011839.200.json
+
+###
+
+POST http://localhost:4004/wardens
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM3MjA0NSwiZXhwIjoxNzYyNDA4MDQ1fQ.8DsBtHQvqrUa1_FunrQ05TlXJq-QovVtLDv762lfR5c
+Content-Length: 190
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "name": "David fincher",
+  "email": "dave@example.com",
+  "password": "securePass123",
+  "gender": "Male",
+  "phone": "9876543210",
+  "hostelId": "89d1f22c-d87d-4fc1-81ec-be34dbbe50ca"
+}
+
+<> 2025-11-06T011734.200.json
+
+###
+
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+Content-Length: 63
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "email": "testuser@test.com",
+  "password": "password123"
+}
+
+<> 2025-11-06T011725.200.json
+
+###
+
+POST http://localhost:4004/wardens
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJubEBleGFtcGxlLmNvbSIsInJvbGUiOiJXQVJERU4iLCJpYXQiOjE3NjIzNjc2MDUsImV4cCI6MTc2MjQwMzYwNX0.4G8khABzCGGBCXG4XnZOOa-BxKJbJdn1CJuBsojyzkw
+Content-Length: 190
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "name": "David fincher",
+  "email": "dave@example.com",
+  "password": "securePass123",
+  "gender": "Male",
+  "phone": "9876543210",
+  "hostelId": "89d1f22c-d87d-4fc1-81ec-be34dbbe50ca"
+}
+
+###
+
+GET http://localhost:4004/hostels/db4954b0-8337-4b60-a10e-32786d437ce3/is-boys
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJubEBleGFtcGxlLmNvbSIsInJvbGUiOiJXQVJERU4iLCJpYXQiOjE3NjIzNjc2MDUsImV4cCI6MTc2MjQwMzYwNX0.4G8khABzCGGBCXG4XnZOOa-BxKJbJdn1CJuBsojyzkw
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+<> 2025-11-06T000358.200.json
+
+###
+
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+Content-Length: 62
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "email": "nl@example.com",
+  "password": "securePass123"
+}
+
+<> 2025-11-06T000325.200.json
+
+###
+
+PATCH http://localhost:4004/requests/690b8d6fa8f1a40a4a403b16/status?status=APPROVED&reviewedBy=Warden
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM1Nzc3NCwiZXhwIjoxNzYyMzkzNzc0fQ.uafbkJJ8jhTRQuJMQbY7qUcGPFsDK6JddZk2MNys7p8
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+content-length: 0
+
+<> 2025-11-05T235606.502.json
+
+###
+
+PATCH http://localhost:4004/requests/6690b8c34a8f1a40a4a403b15/status?status=APPROVED&reviewedBy=Warden
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM1Nzc3NCwiZXhwIjoxNzYyMzkzNzc0fQ.uafbkJJ8jhTRQuJMQbY7qUcGPFsDK6JddZk2MNys7p8
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+content-length: 0
+
+###
+
+POST http://localhost:4004/requests/leave
+Content-Type: application/json
+Content-Length: 197
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+    "studentId": "690b8c34a8f1a40a4a403b15",
+    "type": "HOSTEL_LEAVE",
+    "details": {
+      "roomId": "e4e6fb26-7d7b-4f24-aad0-f563d3149adc",
+      "message": "I want to leave hostel"
+    }
+}
+
+<> 2025-11-05T231348.400.json
+
+###
+
+PATCH http://localhost:4004/requests/690b5e938201430f78b5abd0/status?status=APPROVED&reviewedBy=Warden
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM1Nzc3NCwiZXhwIjoxNzYyMzkzNzc0fQ.uafbkJJ8jhTRQuJMQbY7qUcGPFsDK6JddZk2MNys7p8
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+content-length: 0
+
+<> 2025-11-05T230512.500.json
+
+###
+
+GET http://localhost:4004/hostels/db4954b0-8337-4b60-a10e-32786d437ce3/is-boys
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM1Nzc3NCwiZXhwIjoxNzYyMzkzNzc0fQ.uafbkJJ8jhTRQuJMQbY7qUcGPFsDK6JddZk2MNys7p8
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+<> 2025-11-05T225917.200.json
+
+###
+
+GET http://localhost:4004/hostels/db4954b0-8337-4b60-a10e-32786d437ce3/is-boys
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+###
+
+PATCH http://localhost:4004/requests/690b5e938201430f78b5abd0/status?status=APPROVED&reviewedBy=Warden
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM1Nzc3NCwiZXhwIjoxNzYyMzkzNzc0fQ.uafbkJJ8jhTRQuJMQbY7qUcGPFsDK6JddZk2MNys7p8
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+content-length: 0
+
+<> 2025-11-05T212057.500.json
+
+###
+
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+Content-Length: 63
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "email": "testuser@test.com",
+  "password": "password123"
+}
+
+<> 2025-11-05T211935.200.json
+
+###
+
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+Content-Length: 63
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "email": "testuser@test.com",
+  "password": "password123"
+}
+
+<> 2025-11-05T211916.500.json
+
+###
+
+GET http://localhost:4004/wardens/me/full
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJubEBleGFtcGxlLmNvbSIsInJvbGUiOiJXQVJERU4iLCJpYXQiOjE3NjIzNTE5NTYsImV4cCI6MTc2MjM4Nzk1Nn0.oVR1reabcD06cT594mjj-EMIjUb9SviLl9HD5tnAc4o
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+<> 2025-11-05T194318.200.json
+
+###
+
+GET http://localhost:4004/wardens/me
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJubEBleGFtcGxlLmNvbSIsInJvbGUiOiJXQVJERU4iLCJpYXQiOjE3NjIzNTE5NTYsImV4cCI6MTc2MjM4Nzk1Nn0.oVR1reabcD06cT594mjj-EMIjUb9SviLl9HD5tnAc4o
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+<> 2025-11-05T194308.200.json
+
+###
+
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+Content-Length: 62
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "email": "nl@example.com",
+  "password": "securePass123"
+}
+
+<> 2025-11-05T194236.200.json
+
+###
+
+PATCH http://localhost:4004/requests/690b5741592af5bedafd38a3/status?status=APPROVED&reviewedBy=Warden
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM1MTAwNSwiZXhwIjoxNzYyMzg3MDA1fQ.Mq9WpxWCZrk0z_iZi_xLG_kLhwLuEZhuUolwxm_fla8
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+content-length: 0
+
+<> 2025-11-05T192651.500.json
+
+###
+
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+Content-Length: 63
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "email": "testuser@test.com",
+  "password": "password123"
+}
+
+<> 2025-11-05T192646.200.json
+
+###
+
+PATCH http://localhost:4004/requests/690b5741592af5bedafd38a3/status?status=APPROVED&reviewedBy=Warden
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJubEBleGFtcGxlLmNvbSIsInJvbGUiOiJXQVJERU4iLCJpYXQiOjE3NjIzNTA3NzYsImV4cCI6MTc2MjM4Njc3Nn0.96ve-fuLukV8v0D59zODsjCi6SP-kj64pE6RLRC6TOM
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+content-length: 0
+
+<> 2025-11-05T192535.500.json
+
+###
+
+POST http://localhost:4004/requests/join
+Content-Type: application/json
+Content-Length: 137
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "studentId": "fbaba17b-e2d7-4583-a019-757e457075b0",
+  "type": "HOSTEL_JOIN",
+  "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
+
+}
+
+<> 2025-11-05T192513.200.json
+
+###
+
+PATCH http://localhost:4004/requests/690b567c592af5bedafd38a2/status?status=APPROVED&reviewedBy=Warden
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJubEBleGFtcGxlLmNvbSIsInJvbGUiOiJXQVJERU4iLCJpYXQiOjE3NjIzNTA3NzYsImV4cCI6MTc2MjM4Njc3Nn0.96ve-fuLukV8v0D59zODsjCi6SP-kj64pE6RLRC6TOM
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+content-length: 0
+
+<> 2025-11-05T192304.500.json
+
+###
+
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+Content-Length: 62
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "email": "nl@example.com",
+  "password": "securePass123"
+}
+
+<> 2025-11-05T192256.200.json
+
+###
+
+PATCH http://localhost:4004/requests/690b567c592af5bedafd38a2/status?status=APPROVED&reviewedBy=Warden
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM1MDcyOSwiZXhwIjoxNzYyMzg2NzI5fQ.DCQBKX-slibHyEs0dp5tk8QwtTg0-9sHVjixVSS-PxQ
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+content-length: 0
+
+<> 2025-11-05T192226.500.json
+
+###
+
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+Content-Length: 63
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "email": "testuser@test.com",
+  "password": "password123"
+}
+
+<> 2025-11-05T192209.200.json
+
+###
+
+POST http://localhost:4004/requests/join
+Content-Type: application/json
+Content-Length: 137
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "studentId": "21a489b6-cc96-493a-9d3a-af3258234053",
+  "type": "HOSTEL_JOIN",
+  "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
+
+}
+
+<> 2025-11-05T192156.200.json
+
+###
+
+POST http://localhost:4004/complaints
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW9AZXhhbXBsZS5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc2MjM0OTU3MSwiZXhwIjoxNzYyMzg1NTcxfQ.WAOPJGtIjOtyhCct_WVklv7D1C8x41iritcKMsZp2AQ
+Content-Length: 181
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "title": "Bad food",
+  "description": "The faucet in the 2nd floor bathroom is leaking and floods the floor.",
+  "attachments": [
+    "https://example.com/attachment1.jpg"
+  ]
+}
+
+<> 2025-11-05T192048.201.json
+
+###
+
+POST http://localhost:4004/complaints
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW9AZXhhbXBsZS5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc2MjM0OTU3MSwiZXhwIjoxNzYyMzg1NTcxfQ.WAOPJGtIjOtyhCct_WVklv7D1C8x41iritcKMsZp2AQ
+Content-Length: 207
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "title": "Very Bad faucet in hostel bathroom",
+  "description": "The faucet in the 2nd floor bathroom is leaking and floods the floor.",
+  "attachments": [
+    "https://example.com/attachment1.jpg"
+  ]
+}
+
+<> 2025-11-05T191921.201.json
+
+###
+
+POST http://localhost:4004/complaints
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW9AZXhhbXBsZS5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc2MjM0OTU3MSwiZXhwIjoxNzYyMzg1NTcxfQ.WAOPJGtIjOtyhCct_WVklv7D1C8x41iritcKMsZp2AQ
+Content-Length: 207
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "title": "Very Bad faucet in hostel bathroom",
+  "description": "The faucet in the 2nd floor bathroom is leaking and floods the floor.",
+  "attachments": [
+    "https://example.com/attachment1.jpg"
+  ]
+}
+
+<> 2025-11-05T191712.500.txt
+
+###
+
+POST http://localhost:4004/complaints
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW9AZXhhbXBsZS5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc2MjM0OTU3MSwiZXhwIjoxNzYyMzg1NTcxfQ.WAOPJGtIjOtyhCct_WVklv7D1C8x41iritcKMsZp2AQ
+Content-Length: 202
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "title": "Bad faucet in hostel bathroom",
+  "description": "The faucet in the 2nd floor bathroom is leaking and floods the floor.",
+  "attachments": [
+    "https://example.com/attachment1.jpg"
+  ]
+}
+
+<> 2025-11-05T190335.500.txt
+
+###
+
+POST http://localhost:4004/complaints
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW9AZXhhbXBsZS5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc2MjM0OTU3MSwiZXhwIjoxNzYyMzg1NTcxfQ.WAOPJGtIjOtyhCct_WVklv7D1C8x41iritcKMsZp2AQ
+Content-Length: 202
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "title": "Bad faucet in hostel bathroom",
+  "description": "The faucet in the 2nd floor bathroom is leaking and floods the floor.",
+  "attachments": [
+    "https://example.com/attachment1.jpg"
+  ]
+}
+
+<> 2025-11-05T190308.500.txt
+
+###
+
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+Content-Length: 63
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "email": "leo@example.com",
+  "password": "securePass123"
+}
+
+<> 2025-11-05T190251.200.json
+
+###
+
+POST http://localhost:4004/complaints
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW9AZXhhbXBsZS5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc2MjM0ODEyMiwiZXhwIjoxNzYyMzg0MTIyfQ.SAOwoEuh9xUksmtVzBoPmSIixj-mL6L1aoPJNNJkmmE
+Content-Length: 202
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "title": "Bad faucet in hostel bathroom",
+  "description": "The faucet in the 2nd floor bathroom is leaking and floods the floor.",
+  "attachments": [
+    "https://example.com/attachment1.jpg"
+  ]
+}
+
+<> 2025-11-05T184555.201.json
+
+###
+
+POST http://localhost:4004/complaints
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW9AZXhhbXBsZS5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc2MjM0ODEyMiwiZXhwIjoxNzYyMzg0MTIyfQ.SAOwoEuh9xUksmtVzBoPmSIixj-mL6L1aoPJNNJkmmE
+Content-Length: 202
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "title": "Bad faucet in hostel bathroom",
+  "description": "The faucet in the 2nd floor bathroom is leaking and floods the floor.",
+  "attachments": [
+    "https://example.com/attachment1.jpg"
+  ]
+}
+
+<> 2025-11-05T183910.201.json
+
+###
+
+POST http://localhost:4004/complaints
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW9AZXhhbXBsZS5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc2MjM0ODEyMiwiZXhwIjoxNzYyMzg0MTIyfQ.SAOwoEuh9xUksmtVzBoPmSIixj-mL6L1aoPJNNJkmmE
+Content-Length: 204
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "title": "Leaky faucet in hostel bathroom",
+  "description": "The faucet in the 2nd floor bathroom is leaking and floods the floor.",
+  "attachments": [
+    "https://example.com/attachment1.jpg"
+  ]
+}
+
+<> 2025-11-05T183856.201.json
+
+###
+
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+Content-Length: 63
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "email": "leo@example.com",
+  "password": "securePass123"
+}
+
+<> 2025-11-05T183842.200.json
+
+###
+
+POST http://localhost:4004/requests/join
+Content-Type: application/json
+Content-Length: 137
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "studentId": "21a489b6-cc96-493a-9d3a-af3258234053",
+  "type": "HOSTEL_JOIN",
+  "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
+
+}
+
+###
+
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+Content-Length: 65
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "email": "virat@example.com",
+  "password": "securePass123"
+}
+
+<> 2025-11-05T183432.200.json
+
+###
+
+POST http://localhost:4004/requests/join
+Content-Type: application/json
+Content-Length: 137
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "studentId": "21a489b6-cc96-493a-9d3a-af3258234053",
+  "type": "HOSTEL_JOIN",
+  "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
+
+}
+
+###
+
+PATCH http://localhost:4004/requests/690b482cef753409f8385673/status?status=APPROVED&reviewedBy=Warden
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxdEBleGFtcGxlLmNvbSIsInJvbGUiOiJXQVJERU4iLCJpYXQiOjE3NjIzNDcyNjgsImV4cCI6MTc2MjM4MzI2OH0.h2Ddjf8n6NdjW6u15IP9m67OJaGP9kkmB6M9DvCPoSc
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+content-length: 0
+
+<> 2025-11-05T182442.500.json
+
+###
+
+POST http://localhost:4004/auth/login
+Content-Type: application/json
+Content-Length: 62
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "email": "qt@example.com",
+  "password": "securePass123"
+}
+
+<> 2025-11-05T182428.200.json
+
+###
+
+PATCH http://localhost:4004/requests/690b482cef753409f8385673/status?status=APPROVED&reviewedBy=Warden
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM0NTgwOCwiZXhwIjoxNzYyMzgxODA4fQ.cGzfir9tMR6UfpDrVtS6a5VrMXcurCg09g97KjLqci8
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+content-length: 0
+
+<> 2025-11-05T182142.500.json
+
+###
+
+POST http://localhost:4004/requests/join
+Content-Type: application/json
+Content-Length: 139
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "studentId": "21a489b6-cc96-493a-9d3a-af3258234053",
+  "type": "HOSTEL_JOIN",
+  "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
+
+}
+
+<> 2025-11-05T182053.200.json
+
+###
+
+POST http://localhost:4004/requests/join
+Content-Type: application/json
+Content-Length: 157
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "studentId": "21a489b6-cc96-493a-9d3a-af3258234053",
+  "type": "HOSTEL_JOIN",
+  "details": {
+    "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3"
+  }
+}
+
+<> 2025-11-05T182030.400.json
+
+###
+
+POST http://localhost:4004/hostels/rooms
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjM0NTgwOCwiZXhwIjoxNzYyMzgxODA4fQ.cGzfir9tMR6UfpDrVtS6a5VrMXcurCg09g97KjLqci8
+Content-Length: 75
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=3F2740CD04480294375A3088FA96C5E6
+
+{
+  "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3",
+  "totalSeats": 3
+}
+
+<> 2025-11-05T180921.200.json
+
+###
+

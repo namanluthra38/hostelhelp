@@ -1,0 +1,11 @@
+{
+  "id": "690b5741592af5bedafd38a3",
+  "studentId": "fbaba17b-e2d7-4583-a019-757e457075b0",
+  "hostelId": "db4954b0-8337-4b60-a10e-32786d437ce3",
+  "type": "HOSTEL_JOIN",
+  "details": null,
+  "status": "PENDING",
+  "reviewedBy": null,
+  "createdAt": "2025-11-05T13:55:13.169058496",
+  "updatedAt": "2025-11-05T13:55:13.169058496"
+}

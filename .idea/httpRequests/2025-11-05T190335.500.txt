@@ -1,0 +1,1 @@
+Failed to create complaint: Failed to create complaint: Exception authenticating MongoCredential{mechanism=SCRAM-SHA-1, userName='admin_user', source='admin_user', password=<hidden>, mechanismProperties=<hidden>}
